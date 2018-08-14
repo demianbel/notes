@@ -1,6 +1,7 @@
 package by.demianbel.notes.dbo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "note")
+@EqualsAndHashCode(callSuper = true)
 public class NoteEntity extends AbstractNamedEntity {
 
     @Column(name = "text")
@@ -26,14 +28,17 @@ public class NoteEntity extends AbstractNamedEntity {
             joinColumns = {@JoinColumn(name = "note_id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
+    @EqualsAndHashCode.Exclude
     private Set<TagEntity> tags;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
     private UserEntity user;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "node_id")
+    @EqualsAndHashCode.Exclude
     private NodeEntity node;
 
 }

@@ -1,10 +1,12 @@
 package by.demianbel.notes.dbo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -16,18 +18,24 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(name = "uq_user__name", columnNames = {"name"}))
+@EqualsAndHashCode(callSuper = true)
 public class UserEntity extends AbstractNamedEntity {
 
     @NotNull
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @NotNull
+    @Column(name = "email")
+    private String email;
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
+    @EqualsAndHashCode.Exclude
     private Set<RoleEntity> roles;
 
 }

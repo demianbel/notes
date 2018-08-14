@@ -1,26 +1,33 @@
 package by.demianbel.notes.controller;
 
-import by.demianbel.notes.dbo.NoteEntity;
-import by.demianbel.notes.dto.NoteSavingDto;
+import by.demianbel.notes.dto.note.NoteToSaveDTO;
+import by.demianbel.notes.dto.note.PersistedNoteDTO;
 import by.demianbel.notes.service.NoteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/note")
 public class NoteController {
 
     private final NoteService noteService;
 
-    @Autowired
-    public NoteController(final NoteService noteService) {
-        this.noteService = noteService;
+    @RequestMapping(method = RequestMethod.POST)
+    public PersistedNoteDTO addNote(@RequestBody NoteToSaveDTO noteToSaveDto) {
+        return noteService.createNote(noteToSaveDto);
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
-    public NoteEntity addNote(NoteSavingDto noteSavingDto) {
-        return noteService.createNote(noteSavingDto);
+    @RequestMapping(method = RequestMethod.GET)
+    public PersistedNoteDTO getNoteById(Long id) {
+        return noteService.getNote(id);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public PersistedNoteDTO deactivateNote(Long id) {
+        return noteService.deactivateNote(id);
     }
 }
