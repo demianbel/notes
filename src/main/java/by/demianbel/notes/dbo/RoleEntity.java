@@ -2,6 +2,7 @@ package by.demianbel.notes.dbo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ public class RoleEntity extends AbstractNamedEntity {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<UserEntity> users;
 
 }

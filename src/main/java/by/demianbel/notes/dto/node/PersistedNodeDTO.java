@@ -7,5 +7,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PersistedNodeDTO extends HasIdAndNameDTO {
-
+    private Long parentNodeId;
 }

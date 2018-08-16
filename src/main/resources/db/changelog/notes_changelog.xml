@@ -10,7 +10,7 @@
             <column name="name" type="VARCHAR(25)">
                 <constraints unique="true" uniqueConstraintName="uq_user__name"/>
             </column>
-            <column name="password" type="VARCHAR(50)">
+            <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="VARCHAR(50)"/>
@@ -18,14 +18,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <insert tableName="user">
-            <column name="name" type="VARCHAR(25)">admin</column>
-            <column name="password" type="VARCHAR(50)">admin</column>
-        </insert>
-        <insert tableName="user">
-            <column name="name" type="VARCHAR(25)">user</column>
-            <column name="password" type="VARCHAR(50)">user</column>
-        </insert>
         <rollback>
             <dropTable tableName="user"/>
         </rollback>
@@ -67,9 +59,6 @@
         <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id" constraintName="fk_user_role__role"
                                  referencedTableName="role"
                                  referencedColumnNames="id"/>
-        <sql>INSERT INTO user_role (user_id, role_id) SELECT user.id, role.id FROM user JOIN role on user.name =
-            role.name;
-        </sql>
         <rollback>
             <dropTable tableName="user_role"/>
         </rollback>
@@ -92,7 +81,7 @@
         </createTable>
         <addForeignKeyConstraint baseTableName="node" baseColumnNames="user_id" constraintName="fk_node__user"
                                  referencedTableName="user"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
         <addForeignKeyConstraint baseTableName="node" baseColumnNames="parent_node_id"
                                  constraintName="fk_node__parent_node"
                                  referencedTableName="node"
@@ -120,7 +109,7 @@
         </createTable>
         <addForeignKeyConstraint baseTableName="note" baseColumnNames="user_id" constraintName="fk_note__user"
                                  referencedTableName="user"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
         <addForeignKeyConstraint baseTableName="note" baseColumnNames="node_id" constraintName="fk_note__node"
                                  referencedTableName="node"
                                  referencedColumnNames="id"/>
@@ -146,7 +135,7 @@
         <addUniqueConstraint tableName="tag" columnNames="name, user_id" constraintName="uq_tag__name_user_id"/>
         <addForeignKeyConstraint baseTableName="tag" baseColumnNames="user_id" constraintName="fk_tag__user"
                                  referencedTableName="user"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
         <rollback>
             <dropTable tableName="tag"/>
         </rollback>

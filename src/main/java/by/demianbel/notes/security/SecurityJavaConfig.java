@@ -1,32 +1,39 @@
 package by.demianbel.notes.security;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
 
 
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    @Autowired
+    public RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    private final MySavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler;
+    @Autowired
+    public MySavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler;
 
-    private final NotesUserDetailsService notesUserDetailsService;
+    @Autowired
+    public NotesUserDetailsService notesUserDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        // TODO change encoder to not deprecated
-        auth.userDetailsService(notesUserDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        auth.userDetailsService(notesUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -42,8 +49,8 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/configuration/security").permitAll()
 //                .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/**")
-//                .permitAll()
-                .hasAnyAuthority("admin", "user")
+                .permitAll()
+//                .hasAnyAuthority("admin", "user")
                 .and()
                 .formLogin()
                 .and()

@@ -47,17 +47,18 @@ public class TagService {
     }
 
     public PersistedTagDTO createTagWithName(final String name) {
-        final TagEntity tagToSave;
+
         final UserEntity currentUser = userService.getCurrentUser();
-        final Optional<TagEntity> existingTag = tagRepository.findFirstByUserAndName(currentUser, name);
-        if (existingTag.isPresent()) {
-            tagToSave = existingTag.get();
-        } else {
-            tagToSave = new TagEntity();
-            tagToSave.setName(name);
-        }
+
+        final TagEntity tagToSave = tagRepository.findFirstByUserAndName(currentUser, name).orElseGet(() -> {
+            final TagEntity tagEntity = new TagEntity();
+            tagEntity.setName(name);
+            return tagEntity;
+        });
+
         tagToSave.setActive(true);
         tagToSave.setUser(currentUser);
+
         final TagEntity savedTag = tagRepository.save(tagToSave);
         return persistedTagTagEntityConverter.convertToDto(savedTag);
     }

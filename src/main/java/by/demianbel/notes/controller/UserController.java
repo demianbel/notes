@@ -25,7 +25,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST)
     public PersistedUserDTO addUser(@RequestBody UserToSaveDTO userToSaveDTO) {
-        return userService.createUser(userToSaveDTO);
+        return userService.createAdmin(userToSaveDTO);
     }
 
     @RequestMapping(method = RequestMethod.PUT)

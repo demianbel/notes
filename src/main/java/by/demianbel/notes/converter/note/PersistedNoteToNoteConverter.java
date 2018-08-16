@@ -1,6 +1,7 @@
 package by.demianbel.notes.converter.note;
 
 import by.demianbel.notes.converter.DtoToDboConverter;
+import by.demianbel.notes.converter.node.PersistedNodeToNodeConverter;
 import by.demianbel.notes.converter.tag.PersistedTagTagEntityConverter;
 import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dbo.NoteEntity;
@@ -28,6 +29,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
     private final NodeRepository nodeRepository;
     private final UserService userService;
     private final PersistedTagTagEntityConverter persistedTagTagEntityConverter;
+    private final PersistedNodeToNodeConverter persistedNodeToNodeConverter;
 
     @Override
     public PersistedNoteDTO convertToDto(final NoteEntity noteEntity) {
@@ -39,10 +41,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
 
         final NodeEntity node = noteEntity.getNode();
         if (node != null) {
-            final PersistedNodeDTO nodeDTO = new PersistedNodeDTO();
-            nodeDTO.setId(node.getId());
-            nodeDTO.setName(node.getName());
-            persistedNoteDTO.setNode(nodeDTO);
+            persistedNoteDTO.setNode(persistedNodeToNodeConverter.convertToDto(node));
         }
 
         final Set<TagEntity> tags = noteEntity.getTags();
@@ -59,6 +58,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
     public NoteEntity convertToDbo(final PersistedNoteDTO persistedNoteDTO) {
         final NoteEntity noteEntity = new NoteEntity();
         final UserEntity currentUser = userService.getCurrentUser();
+
         final PersistedNodeDTO nodeDTO = persistedNoteDTO.getNode();
         if (nodeDTO != null) {
             final Long nodeId = nodeDTO.getId();
@@ -66,6 +66,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
                     .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
             noteEntity.setNode(node);
         }
+
         final List<PersistedTagDTO> tagDTOs = persistedNoteDTO.getTags();
         if (tagDTOs != null && !tagDTOs.isEmpty()) {
             final List<Long> tagIds = tagDTOs.stream().map(PersistedTagDTO::getId).collect(Collectors.toList());
@@ -76,6 +77,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
                 throw new RuntimeException("Some tag ids has not found.");
             }
         }
+
         noteEntity.setName(persistedNoteDTO.getName());
         noteEntity.setText(persistedNoteDTO.getText());
         noteEntity.setActive(true);

@@ -7,6 +7,4 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PersistedTagDTO extends HasIdAndNameDTO {
-    private Long id;
-    private String name;
 }

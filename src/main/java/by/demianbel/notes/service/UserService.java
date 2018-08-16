@@ -23,6 +23,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private static final String USER_ROLE_NAME = "user";
+    private static final String ADMIN_ROLE_NAME = "admin";
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserToSaveUserEntityConverter userToSaveUserEntityConverter;
@@ -38,9 +39,9 @@ public class UserService {
 
     }
 
-    public PersistedUserDTO createUser(final UserToSaveDTO userToSaveDTO) {
-        final RoleEntity userRole = roleRepository.findRoleEntityByNameEquals(USER_ROLE_NAME)
-                .orElseThrow(() -> new RuntimeException("User role '" + USER_ROLE_NAME + "' doesn't exist."));
+    public PersistedUserDTO createAdmin(final UserToSaveDTO userToSaveDTO) {
+        final RoleEntity userRole = roleRepository.findRoleEntityByNameEquals(ADMIN_ROLE_NAME)
+                .orElseThrow(() -> new RuntimeException("User role '" + ADMIN_ROLE_NAME + "' doesn't exist."));
 
         final UserEntity userToSave = userToSaveUserEntityConverter.convertToDbo(userToSaveDTO);
         userToSave.setRoles(Collections.singleton(userRole));
