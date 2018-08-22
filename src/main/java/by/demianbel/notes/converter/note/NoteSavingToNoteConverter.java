@@ -39,7 +39,7 @@ public class NoteSavingToNoteConverter implements DtoToDboConverter<NoteToSaveDT
         final UserEntity currentUser = userService.getCurrentUser();
         final Long nodeId = noteToSaveDto.getNodeId();
         if (nodeId != null) {
-            final NodeEntity node = nodeRepository.findByUserAndIdAndActive(currentUser, nodeId, true)
+            final NodeEntity node = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
                     .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
             noteEntity.setNode(node);
         }

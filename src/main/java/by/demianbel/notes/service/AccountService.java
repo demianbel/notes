@@ -5,6 +5,7 @@ import by.demianbel.notes.converter.user.UserToSaveUserEntityConverter;
 import by.demianbel.notes.dbo.RoleEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
+import by.demianbel.notes.dto.user.UserToRestoreDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
 import by.demianbel.notes.repository.RoleRepository;
 import by.demianbel.notes.repository.UserRepository;
@@ -37,6 +38,7 @@ public class AccountService {
         final String password = userToSave.getPassword();
         final String encodedPassword = passwordEncoder.encode(password);
         userToSave.setPassword(encodedPassword);
+        userToSave.setActive(true);
         final UserEntity savedUserEntity = userRepository.save(userToSave);
         return persistedUserUserEntityConverter.convertToDto(savedUserEntity);
     }
@@ -48,4 +50,15 @@ public class AccountService {
         return persistedUserUserEntityConverter.convertToDto(deactivatedUser);
     }
 
+    public PersistedUserDTO restore(final UserToRestoreDTO userToRestoreDTO) {
+        final UserEntity userToRestore = userRepository.findByName(userToRestoreDTO.getName()).orElseThrow(
+                () -> new RuntimeException("User with name '" + userToRestoreDTO.getName() + "' not found"));
+        if (passwordEncoder.matches(userToRestoreDTO.getPassword(), userToRestore.getPassword())) {
+            userToRestore.setActive(true);
+            userRepository.save(userToRestore);
+            return persistedUserUserEntityConverter.convertToDto(userToRestore);
+        } else {
+            throw new RuntimeException("Wrong password.");
+        }
+    }
 }

@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public PersistedUserDTO deleteUser(@RequestBody UserToUpdateDTO userToUpdateDTO) {
-        return userService.removeUser(userToUpdateDTO);
+    public PersistedUserDTO deactivateUser(@RequestBody Long userId) {
+        return userService.deactivateUser(userId);
     }
 
     @RequestMapping(method = RequestMethod.GET)

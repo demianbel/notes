@@ -5,10 +5,12 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.Set;
 
 @Data
 @Entity
@@ -25,4 +27,12 @@ public class NodeEntity extends AbstractNamedEntity {
     @JoinColumn(name = "parent_node_id")
     @EqualsAndHashCode.Exclude
     private NodeEntity parentNode;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentNode")
+    @EqualsAndHashCode.Exclude
+    private Set<NodeEntity> children;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "node")
+    @EqualsAndHashCode.Exclude
+    private Set<NoteEntity> notes;
 }

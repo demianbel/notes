@@ -54,8 +54,8 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .and()
-//                .httpBasic()
-//                .and()
+                .httpBasic()
+                .and()
                 .logout();
     }
 

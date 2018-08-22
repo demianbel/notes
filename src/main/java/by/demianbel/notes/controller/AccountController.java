@@ -1,6 +1,7 @@
 package by.demianbel.notes.controller;
 
 import by.demianbel.notes.dto.user.PersistedUserDTO;
+import by.demianbel.notes.dto.user.UserToRestoreDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
 import by.demianbel.notes.service.AccountService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,11 @@ public class AccountController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public PersistedUserDTO signUp(@RequestBody UserToSaveDTO userToSaveDTO) {
         return accountService.signUp(userToSaveDTO);
+    }
+
+    @RequestMapping(value = "/restore", method = RequestMethod.POST)
+    public PersistedUserDTO restore(@RequestBody UserToRestoreDTO userToRestoreDTO) {
+        return accountService.restore(userToRestoreDTO);
     }
 
     @RequestMapping(value = "/deactivate", method = RequestMethod.DELETE)

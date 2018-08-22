@@ -48,7 +48,7 @@ public class NodeToSaveNodeConverter implements DtoToDboConverter<NodeToSaveDTO,
 
     private NodeEntity findParentNode(final Long id) {
         final UserEntity currentUser = userService.getCurrentUser();
-        return nodeRepository.findByUserAndIdAndActive(currentUser, id, true)
+        return nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, id)
                 .orElseThrow(() -> new RuntimeException("Node with id = '" + id + "' doesn't exist."));
     }
 }

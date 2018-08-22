@@ -62,7 +62,7 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
         final PersistedNodeDTO nodeDTO = persistedNoteDTO.getNode();
         if (nodeDTO != null) {
             final Long nodeId = nodeDTO.getId();
-            final NodeEntity node = nodeRepository.findByUserAndIdAndActive(currentUser, nodeId, true)
+            final NodeEntity node = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
                     .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
             noteEntity.setNode(node);
         }

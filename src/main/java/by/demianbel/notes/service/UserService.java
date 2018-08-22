@@ -2,7 +2,6 @@ package by.demianbel.notes.service;
 
 import by.demianbel.notes.converter.user.PersistedUserUserEntityConverter;
 import by.demianbel.notes.converter.user.UserToSaveUserEntityConverter;
-import by.demianbel.notes.converter.user.UserToUpdateUserEntityConverter;
 import by.demianbel.notes.dbo.RoleEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
@@ -27,7 +26,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserToSaveUserEntityConverter userToSaveUserEntityConverter;
-    private final UserToUpdateUserEntityConverter userToUpdateUserEntityConverter;
     private final PersistedUserUserEntityConverter persistedUserUserEntityConverter;
 
     public UserEntity getCurrentUser() {
@@ -54,51 +52,34 @@ public class UserService {
     public PersistedUserDTO updateUser(final UserToUpdateDTO userToUpdateDTO) {
 
         final Long userId = userToUpdateDTO.getId();
-        final Optional<UserEntity> userToUpdate = userRepository.findById(userId);
-        if (userToUpdate.isPresent()) {
+        final UserEntity userToUpdate = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
 
-            final UserEntity userEntity = userToUpdate.get();
-            if (userEntity.getPassword().equals(userToUpdateDTO.getPassword())) {
-                final String userName = userToUpdateDTO.getName();
-                if (userName != null) {
-                    userEntity.setName(userName);
-                }
-                final String userEmail = userToUpdateDTO.getEmail();
-                if (userEmail != null) {
-                    userEntity.setEmail(userEmail);
-                }
-                final UserEntity savedUserEntity = userRepository.save(userEntity);
-                return persistedUserUserEntityConverter.convertToDto(savedUserEntity);
-            } else {
-                throw new RuntimeException("Wrong password.");
-            }
-
-        } else {
-            throw new RuntimeException("User with id = '" + userId + "' hasn't found.");
+        final String userName = userToUpdateDTO.getName();
+        if (userName != null) {
+            userToUpdate.setName(userName);
         }
+
+        final String userEmail = userToUpdateDTO.getEmail();
+        if (userEmail != null) {
+            userToUpdate.setEmail(userEmail);
+        }
+
+        final UserEntity savedUserEntity = userRepository.save(userToUpdate);
+        return persistedUserUserEntityConverter.convertToDto(savedUserEntity);
+
     }
 
-    public PersistedUserDTO removeUser(final UserToUpdateDTO userToUpdateDTO) {
-        final Long userId = userToUpdateDTO.getId();
-        final Optional<UserEntity> userToDelete = userRepository.findById(userId);
-        if (userToDelete.isPresent()) {
-            userRepository.delete(userToDelete.get());
-            return persistedUserUserEntityConverter.convertToDto(userToDelete.get());
-        } else {
-            throw new RuntimeException("User with id = '" + userId + "' hasn't found.");
-        }
+    public PersistedUserDTO deactivateUser(final Long userId) {
+        final UserEntity userToDeactivate = userRepository.findByIdAndActiveIsTrue(userId)
+                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
+        userToDeactivate.setActive(false);
+        userRepository.save(userToDeactivate);
+        return persistedUserUserEntityConverter.convertToDto(userToDeactivate);
     }
 
     public PersistedUserDTO getUserById(final Long userId) {
-        if (userId != null) {
-            final Optional<UserEntity> foundUser = userRepository.findById(userId);
-            if (foundUser.isPresent()) {
-                return persistedUserUserEntityConverter.convertToDto(foundUser.get());
-            } else {
-                throw new RuntimeException("User with id = '" + userId + "' hasn't found.");
-            }
-        } else {
-            throw new RuntimeException("Id of user shouldn't be null.");
-        }
+        return userRepository.findById(userId).map(persistedUserUserEntityConverter::convertToDto)
+                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
     }
 }

@@ -2,12 +2,15 @@ package by.demianbel.notes.controller;
 
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
+import by.demianbel.notes.dto.tag.PersistedTagDTO;
 import by.demianbel.notes.service.NodeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -34,5 +37,10 @@ public class NodeController {
     @RequestMapping(method = RequestMethod.PUT)
     public PersistedNodeDTO changeNodeName(final Long id, final String name) {
         return nodeService.changeNodeName(id, name);
+    }
+
+    @RequestMapping(value = "/search/name", method = RequestMethod.GET)
+    public List<PersistedNodeDTO> findNodeByName(String name) {
+        return nodeService.findTagByName(name);
     }
 }
