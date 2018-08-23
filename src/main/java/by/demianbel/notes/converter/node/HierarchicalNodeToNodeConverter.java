@@ -6,7 +6,6 @@ import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dbo.NoteEntity;
 import by.demianbel.notes.dto.node.HierarchicalNodeDTO;
 import by.demianbel.notes.dto.note.HierarchicalNoteDTO;
-import by.demianbel.notes.dto.note.PersistedNoteDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

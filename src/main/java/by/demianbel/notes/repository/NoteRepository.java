@@ -23,5 +23,11 @@ public interface NoteRepository extends JpaRepository<NoteEntity, Long> {
 
     List<NoteEntity> findAllByUserAndActiveIsTrueAndTextLike(UserEntity currentUser, String text);
 
+    List<NoteEntity> findAllByUsersToShareContainsAndActiveIsTrue(UserEntity currentUser);
+
+    List<NoteEntity> findAllByUsersToShareContainsAndNodeIsNullAndActiveIsTrue(UserEntity currentUser);
+
+    List<NoteEntity> findAllByUsersToShareContainsAndNodeIsNotNullAndActiveIsTrue(UserEntity currentUser);
+
     Optional<NoteEntity> findFirstByUserAndActiveIsTrueAndText(UserEntity currentUser, String text);
 }

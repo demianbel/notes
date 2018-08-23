@@ -39,4 +39,12 @@ public class UserEntity extends AbstractNamedEntity {
     @EqualsAndHashCode.Exclude
     private Set<RoleEntity> roles;
 
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "note_share_user",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "note_id")}
+    )
+    @EqualsAndHashCode.Exclude
+    private Set<NoteEntity> sharedNotes;
 }

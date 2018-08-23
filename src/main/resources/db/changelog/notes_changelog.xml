@@ -159,4 +159,25 @@
             <dropTable tableName="tag_note"/>
         </rollback>
     </changeSet>
+    <changeSet id="CREATE_NOTE_SHARE_USER_TABLE" author="belsky">
+        <createTable tableName="note_share_user">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="note_share_user" baseColumnNames="user_id"
+                                 constraintName="fk_user_share_note__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="note_share_user" baseColumnNames="note_id"
+                                 constraintName="fk_user_share_note__note"
+                                 referencedTableName="note"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="note_share_user"/>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

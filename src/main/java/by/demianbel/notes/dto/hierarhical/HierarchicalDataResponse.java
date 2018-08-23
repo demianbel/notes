@@ -10,4 +10,5 @@ import java.util.List;
 public class HierarchicalDataResponse {
     private List<HierarchicalNodeDTO> nodes;
     private List<PersistedNoteDTO> notes;
+    private List<HierarchicalNodeDTO> sharedNodes;
 }

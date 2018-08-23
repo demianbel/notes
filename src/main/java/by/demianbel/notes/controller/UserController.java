@@ -24,22 +24,22 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public PersistedUserDTO addUser(@RequestBody UserToSaveDTO userToSaveDTO) {
+    public PersistedUserDTO addUser(@RequestBody final UserToSaveDTO userToSaveDTO) {
         return userService.createAdmin(userToSaveDTO);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public PersistedUserDTO updateUser(@RequestBody UserToUpdateDTO userToUpdateDTO) {
+    public PersistedUserDTO updateUser(@RequestBody final UserToUpdateDTO userToUpdateDTO) {
         return userService.updateUser(userToUpdateDTO);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public PersistedUserDTO deactivateUser(@RequestBody Long userId) {
+    public PersistedUserDTO deactivateUser(@RequestBody final Long userId) {
         return userService.deactivateUser(userId);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PersistedUserDTO getUserById(@RequestParam(USER_ID_PARAMETER_NAME) Long userId) {
+    public PersistedUserDTO getUserById(@RequestParam(USER_ID_PARAMETER_NAME) final Long userId) {
         return userService.getUserById(userId);
     }
 }

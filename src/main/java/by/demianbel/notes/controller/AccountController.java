@@ -18,12 +18,12 @@ public class AccountController {
     private final AccountService accountService;
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public PersistedUserDTO signUp(@RequestBody UserToSaveDTO userToSaveDTO) {
+    public PersistedUserDTO signUp(@RequestBody final UserToSaveDTO userToSaveDTO) {
         return accountService.signUp(userToSaveDTO);
     }
 
     @RequestMapping(value = "/restore", method = RequestMethod.POST)
-    public PersistedUserDTO restore(@RequestBody UserToRestoreDTO userToRestoreDTO) {
+    public PersistedUserDTO restore(@RequestBody final UserToRestoreDTO userToRestoreDTO) {
         return accountService.restore(userToRestoreDTO);
     }
 

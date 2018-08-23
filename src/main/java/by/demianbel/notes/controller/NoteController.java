@@ -23,12 +23,12 @@ public class NoteController {
     private final NodeService nodeService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public PersistedNoteDTO addNote(@RequestBody NoteToSaveDTO noteToSaveDto) {
+    public PersistedNoteDTO addNote(@RequestBody final NoteToSaveDTO noteToSaveDto) {
         return noteService.createNote(noteToSaveDto);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PersistedNoteDTO getNoteById(Long id) {
+    public PersistedNoteDTO getNoteById(final Long id) {
         return noteService.getNote(id);
     }
 
@@ -37,38 +37,83 @@ public class NoteController {
         return noteService.getAllNotes();
     }
 
-    @RequestMapping(value = "/hierarсhy", method = RequestMethod.GET)
+    @RequestMapping(value = "/hierarchy", method = RequestMethod.GET)
     public HierarchicalDataResponse getAllNotesHierarchical() {
         return noteService.getAllNotesHierarchical();
     }
 
-    @RequestMapping(value = "/hierarсhy/node", method = RequestMethod.GET)
-    public HierarchicalNodeDTO getNotesHierarchicalByNode(Long nodeId) {
+    @RequestMapping(value = "/hierarchy/node", method = RequestMethod.GET)
+    public HierarchicalNodeDTO getNotesHierarchicalByNode(final Long nodeId) {
         return nodeService.getHierarchicalNode(nodeId);
     }
 
     @RequestMapping(value = "/find/tag", method = RequestMethod.GET)
-    public List<PersistedNoteDTO> getAllNotesByTag(Long tagId) {
+    public List<PersistedNoteDTO> getAllNotesByTag(final Long tagId) {
         return noteService.getAllNotesByTag(tagId);
     }
 
     @RequestMapping(value = "/find/node", method = RequestMethod.GET)
-    public List<PersistedNoteDTO> getAllNotesByNode(Long nodeId) {
+    public List<PersistedNoteDTO> getAllNotesByNode(final Long nodeId) {
         return noteService.getAllNotesByNode(nodeId);
     }
 
     @RequestMapping(value = "/find/name", method = RequestMethod.GET)
-    public List<PersistedNoteDTO> findNotesByName(String name) {
+    public List<PersistedNoteDTO> findNotesByName(final String name) {
         return noteService.findByName(name);
     }
 
     @RequestMapping(value = "/find/text", method = RequestMethod.GET)
-    public List<PersistedNoteDTO> findNotesByText(String text) {
+    public List<PersistedNoteDTO> findNotesByText(final String text) {
         return noteService.findByText(text);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public PersistedNoteDTO deactivateNote(Long id) {
+    public PersistedNoteDTO deactivateNote(final Long id) {
         return noteService.deactivateNote(id);
+    }
+
+    @RequestMapping(value = "/update/tag/add", method = RequestMethod.PUT)
+    public PersistedNoteDTO addTagToNote(final Long tagId, final Long noteId) {
+        return noteService.addTagToNote(tagId, noteId);
+    }
+
+    @RequestMapping(value = "/update/tag/delete", method = RequestMethod.PUT)
+    public PersistedNoteDTO removeTagFromNote(final Long tagId, final Long noteId) {
+        return noteService.removeTagFromNote(tagId, noteId);
+    }
+
+    @RequestMapping(value = "/update/node/move", method = RequestMethod.PUT)
+    public PersistedNoteDTO moveNoteToNode(final Long nodeId, final Long noteId) {
+        return noteService.moveNoteToNode(nodeId, noteId);
+    }
+
+    @RequestMapping(value = "/update/node/detach", method = RequestMethod.PUT)
+    public PersistedNoteDTO detachNoteFromNode(final Long noteId) {
+        return noteService.detachNoteFromNode(noteId);
+    }
+
+    @RequestMapping(value = "/update/name", method = RequestMethod.PUT)
+    public PersistedNoteDTO changeName(final String name, final Long noteId) {
+        return noteService.changeName(name, noteId);
+    }
+
+    @RequestMapping(value = "/update/text", method = RequestMethod.PUT)
+    public PersistedNoteDTO changeText(final String text, final Long noteId) {
+        return noteService.changeText(text, noteId);
+    }
+
+    @RequestMapping(value = "/share/adduser", method = RequestMethod.PUT)
+    public PersistedNoteDTO shareNoteWithUser(final Long userId, final Long noteId) {
+        return noteService.shareNoteWithUser(userId, noteId);
+    }
+
+    @RequestMapping(value = "/share/removeuser", method = RequestMethod.PUT)
+    public PersistedNoteDTO unshareNoteWithUser(final Long userId, final Long noteId) {
+        return noteService.unshareNoteWithUser(userId, noteId);
+    }
+
+    @RequestMapping(value = "/share", method = RequestMethod.GET)
+    public List<PersistedNoteDTO> getSharedNotes() {
+        return noteService.getSharedNotes();
     }
 }

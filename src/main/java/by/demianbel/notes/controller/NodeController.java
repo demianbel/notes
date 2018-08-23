@@ -2,7 +2,7 @@ package by.demianbel.notes.controller;
 
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
-import by.demianbel.notes.dto.tag.PersistedTagDTO;
+import by.demianbel.notes.dto.note.PersistedNoteDTO;
 import by.demianbel.notes.service.NodeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +40,17 @@ public class NodeController {
     }
 
     @RequestMapping(value = "/search/name", method = RequestMethod.GET)
-    public List<PersistedNodeDTO> findNodeByName(String name) {
-        return nodeService.findTagByName(name);
+    public List<PersistedNodeDTO> findNodeByName(final String name) {
+        return nodeService.findNodeByName(name);
+    }
+
+    @RequestMapping(value = "/share/adduser", method = RequestMethod.PUT)
+    public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId) {
+        return nodeService.shareNodeWithUser(userId, nodeId);
+    }
+
+    @RequestMapping(value = "/share/removeuser", method = RequestMethod.PUT)
+    public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId) {
+        return nodeService.unshareNodeWithUser(userId, nodeId);
     }
 }

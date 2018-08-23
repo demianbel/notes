@@ -27,22 +27,22 @@ public class TagController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PersistedTagDTO findTagById(Long id) {
+    public PersistedTagDTO findTagById(final Long id) {
         return tagService.findTagById(id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public PersistedTagDTO createTagWithName(String name) {
+    public PersistedTagDTO createTagWithName(final String name) {
         return tagService.createTagWithName(name);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public PersistedTagDTO deactivateTag(Long id) {
+    public PersistedTagDTO deactivateTag(final Long id) {
         return tagService.deactivateTag(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public PersistedTagDTO removeNoteLinks(Long id) {
+    public PersistedTagDTO removeNoteLinks(final Long id) {
         return tagService.removeNoteLinks(id);
     }
 }
