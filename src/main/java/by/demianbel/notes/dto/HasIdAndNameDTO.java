@@ -6,10 +6,10 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class HasIdAndNameDTO extends HasIdDTO {
-    public HasIdAndNameDTO() {
+    protected HasIdAndNameDTO() {
     }
 
-    public HasIdAndNameDTO(final String name) {
+    protected HasIdAndNameDTO(final String name) {
         this.name = name;
     }
 

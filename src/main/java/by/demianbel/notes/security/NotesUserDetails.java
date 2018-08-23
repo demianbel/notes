@@ -18,7 +18,7 @@ public class NotesUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(RoleEntity::getName).map(NotesGrantedAuthoritity::new)
+        return user.getRoles().stream().map(RoleEntity::getName).map(NotesGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
 

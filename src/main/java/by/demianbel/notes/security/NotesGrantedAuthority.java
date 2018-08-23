@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 @AllArgsConstructor
-public class NotesGrantedAuthoritity implements GrantedAuthority {
+public class NotesGrantedAuthority implements GrantedAuthority {
 
     private String authority;
 

@@ -39,6 +39,6 @@ public class HierarchicalNoteToNoteConverter implements DtoToDboConverter<Hierar
 
     @Override
     public NoteEntity convertToDbo(final HierarchicalNoteDTO hierarchicalNoteDTO) {
-        throw new UnsupportedOperationException("We shouldn't convert hierarhical DTO to entity. Find by id instead.");
+        throw new UnsupportedOperationException("We shouldn't convert hierarchical DTO to entity. Find by id instead.");
     }
 }

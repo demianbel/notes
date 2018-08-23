@@ -86,7 +86,7 @@ public class NodeService {
     }
 
     @Transactional
-    public List<HierarchicalNodeDTO> getAllNodesHierarhical() {
+    public List<HierarchicalNodeDTO> getAllNodesHierarchical() {
         final UserEntity currentUser = userService.getCurrentUser();
         List<NodeEntity> rootNodes =
                 nodeRepository.findByUserAndActiveIsTrueAndParentNodeIsNull(currentUser);
@@ -186,7 +186,7 @@ public class NodeService {
         notesToShare.forEach(noteEntity -> {
             final Set<UserEntity> usersToShare = noteEntity.getUsersToShare();
             usersToShare.stream().filter(userEntity -> userEntity.getId() == userId).findAny()
-                    .ifPresent(userToUnshare -> usersToShare.remove(userToUnshare));
+                    .ifPresent(usersToShare::remove);
         });
         noteRepository.saveAll(notesToShare);
 
@@ -197,7 +197,7 @@ public class NodeService {
     private Set<NoteEntity> getNotesFromNode(NodeEntity nodeEntity) {
 
         final HashSet<NoteEntity> collectedNotes =
-                new HashSet<NoteEntity>(Optional.ofNullable(nodeEntity.getNotes()).orElse(
+                new HashSet<>(Optional.ofNullable(nodeEntity.getNotes()).orElse(
                         Collections.emptySet()));
 
         Optional.ofNullable(nodeEntity.getChildren()).orElse(Collections.emptySet()).stream()

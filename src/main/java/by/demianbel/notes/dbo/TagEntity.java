@@ -1,6 +1,5 @@
 package by.demianbel.notes.dbo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -72,7 +72,7 @@ public class NoteService {
                         .map(persistedNoteToNoteConverter::convertToDto).collect(
                         Collectors.toList());
         response.setNotes(notesWithoutNodes);
-        response.setNodes(nodeService.getAllNodesHierarhical());
+        response.setNodes(nodeService.getAllNodesHierarchical());
         response.setSharedNodes(nodeService.getSharedNodeHierarchical());
         return response;
     }
