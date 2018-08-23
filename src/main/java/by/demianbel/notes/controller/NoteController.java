@@ -7,6 +7,7 @@ import by.demianbel.notes.dto.note.PersistedNoteDTO;
 import by.demianbel.notes.service.NodeService;
 import by.demianbel.notes.service.NoteService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/note")
+@PreAuthorize("hasAnyAuthority('user','admin')")
 public class NoteController {
 
     private final NoteService noteService;

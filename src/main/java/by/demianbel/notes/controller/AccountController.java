@@ -27,8 +27,4 @@ public class AccountController {
         return accountService.restore(userToRestoreDTO);
     }
 
-    @RequestMapping(value = "/deactivate", method = RequestMethod.DELETE)
-    public PersistedUserDTO deactivateCurrentAccount() {
-        return accountService.deactivateCurrentAccount();
-    }
 }

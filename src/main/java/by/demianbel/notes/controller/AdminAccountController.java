@@ -2,9 +2,9 @@ package by.demianbel.notes.controller;
 
 import by.demianbel.notes.dto.user.PersistedUserDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
-import by.demianbel.notes.dto.user.UserToUpdateDTO;
 import by.demianbel.notes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,24 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+@PreAuthorize("hasAuthority('admin')")
+public class AdminAccountController {
 
     private static final String USER_ID_PARAMETER_NAME = "userId";
     private final UserService userService;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public AdminAccountController(final UserService userService) {
         this.userService = userService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public PersistedUserDTO addUser(@RequestBody final UserToSaveDTO userToSaveDTO) {
         return userService.createAdmin(userToSaveDTO);
-    }
-
-    @RequestMapping(method = RequestMethod.PUT)
-    public PersistedUserDTO updateUser(@RequestBody final UserToUpdateDTO userToUpdateDTO) {
-        return userService.updateUser(userToUpdateDTO);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
