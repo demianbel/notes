@@ -1,0 +1,183 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="CREATE_USER_TABLE" author="belsky">
+        <createTable tableName="user">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="user_pk"/>
+            </column>
+            <column name="name" type="VARCHAR(25)">
+                <constraints unique="true" uniqueConstraintName="uq_user__name"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(50)"/>
+            <column name="active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="user"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_ROLE_TABLE" author="belsky">
+        <createTable tableName="role">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="role_pk"/>
+            </column>
+            <column name="name" type="VARCHAR(25)">
+                <constraints unique="true" uniqueConstraintName="uq_role__name"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="role">
+            <column name="name" type="VARCHAR(25)">admin</column>
+        </insert>
+        <insert tableName="role">
+            <column name="name" type="VARCHAR(25)">user</column>
+        </insert>
+        <rollback>
+            <dropTable tableName="role"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_USER_ROLE_TABLE" author="belsky">
+        <createTable tableName="user_role">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="user_id" constraintName="fk_user_role__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id" constraintName="fk_user_role__role"
+                                 referencedTableName="role"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="user_role"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_NODE_TABLE" author="belsky">
+        <createTable tableName="node">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="node_pk"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_node_id" type="BIGINT"/>
+            <column name="active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="node" baseColumnNames="user_id" constraintName="fk_node__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="node" baseColumnNames="parent_node_id"
+                                 constraintName="fk_node__parent_node"
+                                 referencedTableName="node"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="node"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_NOTE_TABLE" author="belsky">
+        <createTable tableName="note">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="note_pk"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="LONGTEXT"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="node_id" type="BIGINT"/>
+            <column name="active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="note" baseColumnNames="user_id" constraintName="fk_note__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="note" baseColumnNames="node_id" constraintName="fk_note__node"
+                                 referencedTableName="node"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="note"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_TAG_TABLE" author="belsky">
+        <createTable tableName="tag">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="tag_pk"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="tag" columnNames="name, user_id" constraintName="uq_tag__name_user_id"/>
+        <addForeignKeyConstraint baseTableName="tag" baseColumnNames="user_id" constraintName="fk_tag__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <rollback>
+            <dropTable tableName="tag"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_TAG_NOTE_TABLE" author="belsky">
+        <createTable tableName="tag_note">
+            <column name="tag_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="tag_note" baseColumnNames="tag_id" constraintName="fk_tag_note__tag"
+                                 referencedTableName="tag"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="tag_note" baseColumnNames="note_id" constraintName="fk_tag_note__note"
+                                 referencedTableName="note"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="tag_note"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="CREATE_NOTE_SHARE_USER_TABLE" author="belsky">
+        <createTable tableName="note_share_user">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="note_share_user" baseColumnNames="user_id"
+                                 constraintName="fk_user_share_note__user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="note_share_user" baseColumnNames="note_id"
+                                 constraintName="fk_user_share_note__note"
+                                 referencedTableName="note"
+                                 referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="note_share_user"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
