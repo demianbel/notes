@@ -25,3 +25,10 @@
 /.nb-gradle/
 
 /log/
+/notes_backend/log/
+notes_backend/log/
+notes_backend/src/main/resources/public/
+notes_backend/src/main/resources/templates/
+notes_backend/src/test/java/by/demianbel/notes/converter/
+notes_backend/target/
+notes_frontend/target/

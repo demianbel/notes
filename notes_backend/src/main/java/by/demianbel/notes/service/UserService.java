@@ -30,10 +30,10 @@ public class UserService {
 
     public UserEntity getCurrentUser() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final NotesUserDetails principal = (NotesUserDetails) authentication.getPrincipal();
-        final Optional<UserEntity> currentUser = userRepository.findById(principal.getUser().getId());
+        final String userName = (String) authentication.getPrincipal();
+        final Optional<UserEntity> currentUser = userRepository.findByName(userName);
         return currentUser.orElseThrow(
-                () -> new RuntimeException("User with id = '" + principal.getUser().getId() + "' not found."));
+                () -> new RuntimeException("User with name = '" + userName + "' not found."));
 
     }
 
