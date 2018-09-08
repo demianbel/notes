@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '../components/login'
-import Secure from '../components/secure'
-import SignUp from '../components/sign_up'
+import Login from '../components/login/login'
+import Secure from '../components/secure/secure'
+import SignUp from '../components/sign_up/signup'
 
 Vue.use(Router)
 

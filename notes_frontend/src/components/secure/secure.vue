@@ -9,7 +9,7 @@
 
 <script>
   export default {
-    name: 'secure',
+    name: 'Secure',
     data() {
       return {};
     }

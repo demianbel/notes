@@ -44,9 +44,15 @@
           .then(response => {
             this.token = 'Bearer ' + response.data.access_token;
             this.refresh_token = response.data.refresh_token;
+            this.$router.replace({ name: "Secure" });
           })
           .catch(e => {
-
+            this.$notify({
+              group: 'general_notifications',
+              title: 'Error',
+              text: 'Wrong login or password!',
+              type: 'error'
+            });
           })
       }
     }
@@ -58,8 +64,7 @@
     width: 500px;
     border: 1px solid #CCCCCC;
     background-color: #FFFFFF;
-    margin: auto;
-    margin-top: 200px;
+    margin: 200px auto auto;
     padding: 20px;
   }
 </style>

@@ -34,7 +34,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .cors().and()
                 .anonymous().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/notes/rest/signup", "/notes/rest/restore").permitAll()
                 .antMatchers("/oauth/**").authenticated();
 

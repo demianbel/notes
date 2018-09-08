@@ -3,7 +3,8 @@
     <div id="nav">
       <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout</router-link>
     </div>
-    <router-view @authenticated="setAuthenticated" />
+    <router-view @authenticated="setAuthenticated"/>
+    <notifications position="top center" group="general_notifications"/>
   </div>
 </template>
 
@@ -17,8 +18,8 @@
       }
     },
     mounted() {
-      if(!this.authenticated) {
-        this.$router.replace({ name: "Login" });
+      if (!this.authenticated) {
+        this.$router.replace({name: "Login"});
       }
     },
     methods: {
@@ -36,10 +37,12 @@
   body {
     background-color: #F0F0F0;
   }
+
   h1 {
     padding: 0;
     margin-top: 0;
   }
+
   #app {
     width: 1024px;
     margin: auto;
