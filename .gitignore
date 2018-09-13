@@ -32,3 +32,4 @@ notes_backend/src/main/resources/templates/
 notes_backend/src/test/java/by/demianbel/notes/converter/
 notes_backend/target/
 notes_frontend/target/
+/notes_frontend/node/
