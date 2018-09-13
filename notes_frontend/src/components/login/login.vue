@@ -9,7 +9,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
 
   export default {
     name: 'Login',
@@ -19,8 +18,6 @@
           username: "",
           password: ""
         },
-        token: "",
-        refresh_token: ""
       }
     },
     methods: {
@@ -28,32 +25,7 @@
         this.$router.replace({name : 'SignUp'})
       },
       login() {
-        let formData = new FormData();
-        formData.append('username', this.input.username);
-        formData.append('password', this.input.password);
-        formData.append('grant_type', 'password');
-        axios({
-          url: `http://localhost:8080/oauth/token`,
-          method: 'post',
-          auth: {
-            username: "notes-frontend",
-            password: "notes-frontend"
-          },
-          data: formData,
-        })
-          .then(response => {
-            this.token = 'Bearer ' + response.data.access_token;
-            this.refresh_token = response.data.refresh_token;
-            this.$router.replace({ name: "Secure" });
-          })
-          .catch(e => {
-            this.$notify({
-              group: 'general_notifications',
-              title: 'Error',
-              text: 'Wrong login or password!',
-              type: 'error'
-            });
-          })
+        this.$store.dispatch("auth/authorize",this.input)
       }
     }
   }

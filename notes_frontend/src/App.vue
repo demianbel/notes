@@ -1,34 +1,27 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout</router-link>
-    </div>
-    <router-view @authenticated="setAuthenticated"/>
+    <login v-if="this.authorized"></login>
+    <button v-else @click="logout">Log out</button>
     <notifications position="top center" group="general_notifications"/>
   </div>
 </template>
 
 <script>
+  import login from './components/login/login'
   export default {
     name: 'App',
-    data() {
-      return {
-        authenticated: false,
-        authToken: null
-      }
-    },
-    mounted() {
-      if (!this.authenticated) {
-        this.$router.replace({name: "Login"});
+    computed: {
+      authorized: function () {
+        return this.$store.state.auth.authorized !== 'success';
       }
     },
     methods: {
-      setAuthenticated(status) {
-        this.authenticated = status;
-      },
       logout() {
-        this.authenticated = false;
+        this.$store.commit("auth/logout");
       }
+    },
+    components: {
+      login
     }
   }
 </script>

@@ -19,15 +19,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -103,40 +96,67 @@ public class NodeService {
     @Transactional
     public List<HierarchicalNodeDTO> getSharedNodeHierarchical() {
 
-        final Map<String, HierarchicalNodeDTO> sharedNotesByUserName =
-                noteRepository.findAllByUsersToShareContainsAndNodeIsNullAndActiveIsTrue(userService.getCurrentUser())
-                        .stream().collect(
-                        Collectors.toMap(note -> note.getUser().getName(), note -> {
-                            final HierarchicalNodeDTO userNode = new HierarchicalNodeDTO();
-                            userNode.setName(note.getUser().getName());
-                            userNode.getNotes().add(hierarchicalNoteToNoteConverter.convertToDto(note));
-                            return userNode;
-                        }, (a, b) -> {
-                            a.getNotes().addAll(b.getNotes());
-                            return a;
-                        }, HashMap::new));
+        final Map<String, HierarchicalNodeDTO> sharedNotesByUserName = getSharedNotesWithoutNodesByUserName();
 
-        final Map<String, List<NoteEntity>> notesWithNodesByUserNames = noteRepository
-                .findAllByUsersToShareContainsAndNodeIsNotNullAndActiveIsTrue(userService.getCurrentUser())
-                .stream().filter(note -> {
-                    NodeEntity node = note.getNode();
-                    return node != null && node.isActive();
-                }).collect(Collectors.groupingBy(note -> note.getUser().getName()));
+        final Map<String, List<NoteEntity>> notesWithNodesByUserNames = getSharedNotesWithNodesByUserName();
 
-        notesWithNodesByUserNames.forEach((key, value) -> {
-            final HierarchicalNodeDTO userHierarchicalNode =
-                    sharedNotesByUserName.computeIfAbsent(key, HierarchicalNodeDTO::new);
-            Map<Long, List<NoteEntity>> notesByNodeId =
-                    value.stream().collect(Collectors.groupingBy(note -> note.getNode().getId()));
-            notesByNodeId.forEach((k, v) -> {
-                HierarchicalNodeDTO sharedNode = new HierarchicalNodeDTO(v.get(0).getNode().getName());
-                sharedNode.setNotes(v.stream().map(hierarchicalNoteToNoteConverter::convertToDto).collect(
-                        Collectors.toList()));
-                userHierarchicalNode.getChildren().add(sharedNode);
-            });
-        });
+        notesWithNodesByUserNames.forEach((userName, notes) -> populateHierarchyWithUserNode(sharedNotesByUserName, userName, notes));
 
         return new ArrayList<>(sharedNotesByUserName.values());
+    }
+
+    private void populateHierarchyWithUserNode(Map<String, HierarchicalNodeDTO> sharedNotesByUserName, String userName, List<NoteEntity> notes) {
+        final HierarchicalNodeDTO userHierarchicalNode =
+                sharedNotesByUserName.computeIfAbsent(userName, HierarchicalNodeDTO::new);
+
+        final Map<Long, List<NoteEntity>> notesByNodeId =
+                notes.stream().collect(Collectors.groupingBy(note -> note.getNode().getId()));
+
+        notesByNodeId.forEach((nodeId, nodesNote) -> {
+            HierarchicalNodeDTO sharedNode = createHierarchicalNode(nodesNote);
+            userHierarchicalNode.getChildren().add(sharedNode);
+        });
+    }
+
+    private HierarchicalNodeDTO createHierarchicalNode(List<NoteEntity> nodesNote) {
+        HierarchicalNodeDTO sharedNode = new HierarchicalNodeDTO(nodesNote.get(0).getNode().getName());
+        sharedNode.setNotes(nodesNote.stream().map(hierarchicalNoteToNoteConverter::convertToDto).collect(
+                Collectors.toList()));
+        return sharedNode;
+    }
+
+    private Map<String, List<NoteEntity>> getSharedNotesWithNodesByUserName() {
+        return noteRepository
+                .findAllByUsersToShareContainsAndNodeIsNotNullAndActiveIsTrue(userService.getCurrentUser())
+                .stream().filter(this::isNoteWithActiveNode).collect(Collectors.groupingBy(this::getNoteCreatorName));
+    }
+
+    private HashMap<String, HierarchicalNodeDTO> getSharedNotesWithoutNodesByUserName() {
+        return noteRepository.findAllByUsersToShareContainsAndNodeIsNullAndActiveIsTrue(userService.getCurrentUser())
+                .stream().collect(
+                        Collectors.toMap(this::getNoteCreatorName, this::getHierarchicalNode, this::mergeSharedNotes, HashMap::new));
+    }
+
+    private boolean isNoteWithActiveNode(NoteEntity note) {
+        NodeEntity node = note.getNode();
+        return node != null && node.isActive();
+    }
+
+    @NotNull
+    private String getNoteCreatorName(NoteEntity note) {
+        return note.getUser().getName();
+    }
+
+    private HierarchicalNodeDTO getHierarchicalNode(NoteEntity note) {
+        final HierarchicalNodeDTO userNode = new HierarchicalNodeDTO();
+        userNode.setName(getNoteCreatorName(note));
+        userNode.getNotes().add(hierarchicalNoteToNoteConverter.convertToDto(note));
+        return userNode;
+    }
+
+    private HierarchicalNodeDTO mergeSharedNotes(HierarchicalNodeDTO a, HierarchicalNodeDTO b) {
+        a.getNotes().addAll(b.getNotes());
+        return a;
     }
 
 
