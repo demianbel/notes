@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <login v-if="this.authorized"></login>
-    <button v-else @click="logout">Log out</button>
+    <router-view></router-view>
     <notifications position="top center" group="general_notifications"/>
   </div>
 </template>

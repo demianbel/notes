@@ -1,13 +1,13 @@
 <template>
   <div id="signUp">
     <h1>Sign Up</h1>
-    <login for="login">Name:</login>
+    <label for="login">Name:</label>
     <input id="login" type="text" name="username" v-model="signUpBody.name" placeholder="Username"/>
-    <login for="email">E-mail:</login>
+    <label for="email">E-mail:</label>
     <input id="email" type="text" name="email" v-model="signUpBody.email" placeholder="Email"/>
-    <login for="password">Password:</login>
+    <label for="password">Password:</label>
     <input id="password" type="password" name="password" v-model="signUpBody.password" placeholder="Password"/>
-    <button type="button" v-on:click="signUp()">Sign Up</button>
+    <button type="button" @click="signUp()">Sign Up</button>
   </div>
 </template>
 
@@ -25,6 +25,14 @@
         }
       }
     },
+    computed: {
+      credentials: function () {
+        return {
+          username: this.name,
+          password: this.password
+        }
+      }
+    },
     methods: {
       signUp() {
         axios.post(`http://localhost:8080/notes/rest/account/signup`, this.signUpBody)
@@ -35,7 +43,8 @@
               text: 'Sign up success!',
               type: 'info'
             });
-            this.$router.replace({name: "Login"});
+            this.$store.dispatch("auth/authorize",this.credentials)
+            this.$router.replace({name: "Main"});
           })
           .catch(e => {
             this.$notify({

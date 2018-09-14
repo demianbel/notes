@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Login from '../components/login/login'
-import Secure from '../components/secure/secure'
-import SignUp from '../components/sign_up/signup'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Login from '../components/login/login';
+import Secure from '../components/secure/secure';
+import SignUp from '../components/sign_up/signup';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -17,7 +17,7 @@ export default new Router({
     {
       path: "/login",
       name: "Login",
-      component: Login
+      component: Login,
     },
     {
       path: "/secure",
@@ -30,4 +30,4 @@ export default new Router({
       component: SignUp
     }
   ]
-})
+});

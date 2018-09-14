@@ -3,8 +3,8 @@
     <h1>Login</h1>
     <input type="text" name="username" v-model="input.username" placeholder="Username"/>
     <input type="password" name="password" v-model="input.password" placeholder="Password"/>
-    <button type="button" v-on:click="login()">Login</button>
-    <button type="button" v-on:click="signUp()">Sign Up</button>
+    <button type="button" @click="login()">Login</button>
+    <button type="button" @click="signUp()">Sign Up</button>
   </div>
 </template>
 
@@ -16,16 +16,17 @@
       return {
         input: {
           username: "",
-          password: ""
+          password: "",
+          vue: this
         },
       }
     },
     methods: {
       signUp() {
-        this.$router.replace({name : 'SignUp'})
+        this.$router.replace({name: 'SignUp'})
       },
       login() {
-        this.$store.dispatch("auth/authorize",this.input)
+        this.$store.dispatch("auth/authorize", this.input);
       }
     }
   }
