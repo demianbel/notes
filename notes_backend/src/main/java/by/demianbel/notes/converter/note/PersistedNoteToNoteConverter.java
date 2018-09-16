@@ -25,9 +25,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PersistedNoteToNoteConverter implements DtoToDboConverter<PersistedNoteDTO, NoteEntity> {
 
-    private final TagRepository tagRepository;
-    private final NodeRepository nodeRepository;
-    private final UserService userService;
     private final PersistedTagTagEntityConverter persistedTagTagEntityConverter;
     private final PersistedNodeToNodeConverter persistedNodeToNodeConverter;
 
@@ -56,32 +53,6 @@ public class PersistedNoteToNoteConverter implements DtoToDboConverter<Persisted
 
     @Override
     public NoteEntity convertToDbo(final PersistedNoteDTO persistedNoteDTO) {
-        final NoteEntity noteEntity = new NoteEntity();
-        final UserEntity currentUser = userService.getCurrentUser();
-
-        final PersistedNodeDTO nodeDTO = persistedNoteDTO.getNode();
-        if (nodeDTO != null) {
-            final Long nodeId = nodeDTO.getId();
-            final NodeEntity node = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
-                    .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
-            noteEntity.setNode(node);
-        }
-
-        final List<PersistedTagDTO> tagDTOs = persistedNoteDTO.getTags();
-        if (tagDTOs != null && !tagDTOs.isEmpty()) {
-            final List<Long> tagIds = tagDTOs.stream().map(PersistedTagDTO::getId).collect(Collectors.toList());
-            final List<TagEntity> tags = tagRepository.findByUserAndActiveAndIdIn(currentUser, true, tagIds);
-            if (tags.size() == tagIds.size()) {
-                noteEntity.setTags(new HashSet<>(tags));
-            } else {
-                throw new RuntimeException("Some tag ids has not found.");
-            }
-        }
-
-        noteEntity.setName(persistedNoteDTO.getName());
-        noteEntity.setText(persistedNoteDTO.getText());
-        noteEntity.setActive(true);
-
-        return noteEntity;
+        throw new UnsupportedOperationException("We shouldn't convert persisted dto to dbo");
     }
 }

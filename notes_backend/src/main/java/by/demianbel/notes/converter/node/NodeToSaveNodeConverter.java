@@ -7,6 +7,7 @@ import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.service.UserService;
 import lombok.AllArgsConstructor;
+import org.mockito.Mock;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,7 @@ public class NodeToSaveNodeConverter implements DtoToDboConverter<NodeToSaveDTO,
 
     @Override
     public NodeToSaveDTO convertToDto(final NodeEntity nodeEntity) {
-        final NodeToSaveDTO nodeDTO = new NodeToSaveDTO();
-        BeanUtils.copyProperties(nodeEntity, nodeDTO);
-        nodeDTO.setParentNodeId(Optional.ofNullable(nodeEntity.getParentNode()).map(NodeEntity::getId).orElse(null));
-        return nodeDTO;
+        throw new UnsupportedOperationException("We shouldn't convert dbo to saving dbo");
     }
 
     @Override

@@ -1,5 +1,6 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.configuration.security;
 
+import by.demianbel.notes.service.NotesUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

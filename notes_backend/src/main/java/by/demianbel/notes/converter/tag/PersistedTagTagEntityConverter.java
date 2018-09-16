@@ -18,8 +18,6 @@ public class PersistedTagTagEntityConverter implements DtoToDboConverter<Persist
 
     @Override
     public TagEntity convertToDbo(final PersistedTagDTO persistedTagDTO) {
-        final TagEntity tagEntity = new TagEntity();
-        BeanUtils.copyProperties(persistedTagDTO, tagEntity);
-        return tagEntity;
+        throw new UnsupportedOperationException("We shouldn't convert persisted dto to dbo");
     }
 }

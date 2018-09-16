@@ -37,6 +37,7 @@ public class AccountService {
 
         final String password = userToSave.getPassword();
         final String encodedPassword = passwordEncoder.encode(password);
+
         userToSave.setPassword(encodedPassword);
         userToSave.setActive(true);
         final UserEntity savedUserEntity = userRepository.save(userToSave);

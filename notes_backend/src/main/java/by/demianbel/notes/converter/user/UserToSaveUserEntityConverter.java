@@ -11,9 +11,7 @@ public class UserToSaveUserEntityConverter implements DtoToDboConverter<UserToSa
 
     @Override
     public UserToSaveDTO convertToDto(final UserEntity userEntity) {
-        final UserToSaveDTO userToSaveDTO = new UserToSaveDTO();
-        BeanUtils.copyProperties(userEntity, userToSaveDTO);
-        return userToSaveDTO;
+        throw new UnsupportedOperationException("We shouldn't convert dbo to saving dbo");
     }
 
     @Override

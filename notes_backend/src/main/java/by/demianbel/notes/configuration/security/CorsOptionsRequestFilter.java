@@ -1,4 +1,4 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.configuration.security;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

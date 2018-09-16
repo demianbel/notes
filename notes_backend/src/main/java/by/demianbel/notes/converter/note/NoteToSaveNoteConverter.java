@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class NoteSavingToNoteConverter implements DtoToDboConverter<NoteToSaveDTO, NoteEntity> {
+public class NoteToSaveNoteConverter implements DtoToDboConverter<NoteToSaveDTO, NoteEntity> {
 
     private final TagRepository tagRepository;
     private final NodeRepository nodeRepository;
@@ -25,12 +25,7 @@ public class NoteSavingToNoteConverter implements DtoToDboConverter<NoteToSaveDT
 
     @Override
     public NoteToSaveDTO convertToDto(final NoteEntity noteEntity) {
-        final NoteToSaveDTO noteToSaveDto = new NoteToSaveDTO();
-
-        noteToSaveDto.setName(noteEntity.getName());
-        noteToSaveDto.setText(noteEntity.getText());
-
-        return noteToSaveDto;
+        throw new UnsupportedOperationException("We shouldn't convert dbo to saving dbo");
     }
 
     @Override

@@ -26,7 +26,7 @@ public class HierarchicalNodeToNodeConverterTest {
     private HierarchicalNodeToNodeConverter hierarchicalNodeToNodeConverter;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         hierarchicalNodeToNodeConverter =
                 new HierarchicalNodeToNodeConverter(new HierarchicalNoteToNoteConverter(new PersistedTagTagEntityConverter()));
 

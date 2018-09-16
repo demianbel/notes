@@ -1,4 +1,4 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.dto;
 
 import by.demianbel.notes.dbo.RoleEntity;
 import by.demianbel.notes.dbo.UserEntity;

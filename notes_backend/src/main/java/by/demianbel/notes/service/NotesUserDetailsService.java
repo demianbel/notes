@@ -1,6 +1,7 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.service;
 
 import by.demianbel.notes.repository.UserRepository;
+import by.demianbel.notes.dto.NotesUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

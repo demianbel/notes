@@ -1,4 +1,4 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.dto;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

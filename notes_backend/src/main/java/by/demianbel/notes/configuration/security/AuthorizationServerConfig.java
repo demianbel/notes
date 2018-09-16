@@ -1,6 +1,5 @@
-package by.demianbel.notes.security;
+package by.demianbel.notes.configuration.security;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +31,6 @@ import java.util.UUID;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-
-    private static final Logger LOGGER = Logger.getLogger(AuthorizationServerConfig.class);
 
     @Autowired
     private UserDetailsService notesUserDetailsService;

@@ -23,8 +23,6 @@ public class PersistedUserUserEntityConverter implements DtoToDboConverter<Persi
 
     @Override
     public UserEntity convertToDbo(final PersistedUserDTO persistedUserDTO) {
-        final UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(persistedUserDTO, userEntity);
-        return userEntity;
+        throw new UnsupportedOperationException("We shouldn't convert persisted dto to dbo");
     }
 }

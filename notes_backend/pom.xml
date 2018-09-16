@@ -89,6 +89,11 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>2.4.0-b180725.0644</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.21.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -9,7 +9,6 @@ import by.demianbel.notes.dto.user.UserToSaveDTO;
 import by.demianbel.notes.dto.user.UserToUpdateDTO;
 import by.demianbel.notes.repository.RoleRepository;
 import by.demianbel.notes.repository.UserRepository;
-import by.demianbel.notes.security.NotesUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +20,6 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private static final String USER_ROLE_NAME = "user";
     private static final String ADMIN_ROLE_NAME = "admin";
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;

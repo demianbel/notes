@@ -1,6 +1,6 @@
 package by.demianbel.notes.service;
 
-import by.demianbel.notes.converter.note.NoteSavingToNoteConverter;
+import by.demianbel.notes.converter.note.NoteToSaveNoteConverter;
 import by.demianbel.notes.converter.note.PersistedNoteToNoteConverter;
 import by.demianbel.notes.dbo.AbstractEntity;
 import by.demianbel.notes.dbo.NodeEntity;
@@ -33,13 +33,13 @@ public class NoteService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final NodeRepository nodeRepository;
-    private final NoteSavingToNoteConverter noteSavingToNoteConverter;
+    private final NoteToSaveNoteConverter noteToSaveNoteConverter;
     private final PersistedNoteToNoteConverter persistedNoteToNoteConverter;
     private final UserService userService;
     private final NodeService nodeService;
 
     public PersistedNoteDTO createNote(final NoteToSaveDTO noteDto) {
-        final NoteEntity noteToSave = noteSavingToNoteConverter.convertToDbo(noteDto);
+        final NoteEntity noteToSave = noteToSaveNoteConverter.convertToDbo(noteDto);
         final UserEntity currentUser = userService.getCurrentUser();
         noteToSave.setUser(currentUser);
         final NoteEntity savedNote = noteRepository.save(noteToSave);
