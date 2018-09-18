@@ -4,6 +4,7 @@ import by.demianbel.notes.converter.tag.PersistedTagTagEntityConverter;
 import by.demianbel.notes.dbo.TagEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.tag.PersistedTagDTO;
+import by.demianbel.notes.dto.tag.TagNameDTO;
 import by.demianbel.notes.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,12 @@ public class TagService {
     private final PersistedTagTagEntityConverter persistedTagTagEntityConverter;
 
 
-    public List<PersistedTagDTO> findTagByName(final String name) {
+    public List<PersistedTagDTO> findTagByName(final TagNameDTO tagNameDTO) {
         final ArrayList<PersistedTagDTO> resultTags = new ArrayList<>();
         final UserEntity currentUser = userService.getCurrentUser();
-        final Optional<TagEntity> equalTag = tagRepository.findFirstByUserAndActiveAndName(currentUser, true, name);
+        final Optional<TagEntity> equalTag = tagRepository.findFirstByUserAndActiveAndName(currentUser, true, tagNameDTO.getName());
         final List<TagEntity> similarTags =
-                tagRepository.findAllByUserAndActiveAndNameLike(currentUser, true, "%" + name + "%");
+                tagRepository.findAllByUserAndActiveAndNameLike(currentUser, true, "%" + tagNameDTO.getName() + "%");
 
         equalTag.map(persistedTagTagEntityConverter::convertToDto).ifPresent(resultTags::add);
         final Long filterTagId;
@@ -46,10 +47,11 @@ public class TagService {
 
     }
 
-    public PersistedTagDTO createTagWithName(final String name) {
+    public PersistedTagDTO createTagWithName(final TagNameDTO tagNameDTO) {
 
         final UserEntity currentUser = userService.getCurrentUser();
 
+        final String name = tagNameDTO.getName();
         final TagEntity tagToSave = tagRepository.findFirstByUserAndName(currentUser, name).orElseGet(() -> {
             final TagEntity tagEntity = new TagEntity();
             tagEntity.setName(name);

@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const state = {
+  username: "",
   authToken: "",
   refresh_token: "",
   authorized: 'false'
@@ -9,7 +10,7 @@ const state = {
 const getters = {};
 
 const actions = {
-  authorize: function(context, credentials) {
+  authorize: function (context, credentials) {
     if (state.authorized !== 'in progress') {
       context.commit('setStatus', 'in progress');
       let formData = new FormData();
@@ -28,9 +29,16 @@ const actions = {
         context.commit('setToken', 'Bearer ' + response.data.access_token);
         context.commit('setRefreshToken', response.data.refresh_token);
         context.commit('setStatus', 'success');
-        credentials.vue.$router.push("/secure");
+        context.commit('setUsername', credentials.username)
+        credentials.vue.$router.replace({name: 'NotesView'});
       }).catch(e => {
         context.commit('setStatus', 'false');
+        credentials.vue.$notify({
+          group: 'general_notifications',
+          title: 'Error',
+          text: 'Try again!',
+          type: 'error'
+        });
       });
     }
   }
@@ -46,10 +54,14 @@ const mutations = {
   setStatus(state, status) {
     state.authorized = status;
   },
+  setUsername(state, username) {
+    state.username = username;
+  },
   logout() {
     state.authToken = '';
     state.refresh_token = '';
     state.authorized = 'false';
+    state.username = ''
   }
 };
 

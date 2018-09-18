@@ -6,6 +6,7 @@ import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.service.UserService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,12 +23,20 @@ public class NodeToSaveNodeConverterTest {
 
     @Mock
     private NodeRepository nodeRepository;
+
     @Mock
     private UserService userService;
 
+    private NodeToSaveNodeConverter converter;
+
+    @Before
+    public void setUp() {
+        converter = new NodeToSaveNodeConverter(nodeRepository, userService);
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void convertToDto() {
-        new NodeToSaveNodeConverter(nodeRepository, userService).convertToDto(null);
+        converter.convertToDto(null);
     }
 
     @Test
@@ -44,8 +53,8 @@ public class NodeToSaveNodeConverterTest {
         nodeToSaveDTO.setName(TEST_NODE_NAME);
         nodeToSaveDTO.setParentNodeId(1L);
 
-        final NodeToSaveNodeConverter converter = new NodeToSaveNodeConverter(nodeRepository, userService);
         final NodeEntity nodeEntity = converter.convertToDbo(nodeToSaveDTO);
+
         Assert.assertEquals(TEST_NODE_NAME, nodeEntity.getName());
         final NodeEntity convertedParentNode = nodeEntity.getParentNode();
         Assert.assertNotNull(convertedParentNode);

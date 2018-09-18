@@ -3,15 +3,22 @@ package by.demianbel.notes.converter.node;
 import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class PersistedNodeToNodeConverterTest {
 
     private static final String TEST_NODE_NAME = "test node name";
 
+    private PersistedNodeToNodeConverter converter;
+
+    @Before
+    public void setUp() {
+        converter = new PersistedNodeToNodeConverter();
+    }
+
     @Test
     public void convertToDto() {
-        final PersistedNodeToNodeConverter converter = new PersistedNodeToNodeConverter();
         final NodeEntity nodeEntity = new NodeEntity();
         nodeEntity.setId(1L);
         nodeEntity.setName(TEST_NODE_NAME);
@@ -28,6 +35,6 @@ public class PersistedNodeToNodeConverterTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void convertToDbo() {
-        new PersistedNodeToNodeConverter().convertToDbo(null);
+        converter.convertToDbo(null);
     }
 }

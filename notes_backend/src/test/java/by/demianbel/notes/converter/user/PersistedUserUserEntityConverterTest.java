@@ -4,6 +4,7 @@ import by.demianbel.notes.dbo.RoleEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,6 +14,13 @@ public class PersistedUserUserEntityConverterTest {
 
     private static final String TEST_EMAIL = "test email";
     private static final String ROLE_NAME = "role name";
+
+    private PersistedUserUserEntityConverter converter;
+
+    @Before
+    public void setUp() {
+        converter = new PersistedUserUserEntityConverter();
+    }
 
     @Test
     public void convertToDto() {
@@ -24,7 +32,6 @@ public class PersistedUserUserEntityConverterTest {
         role.setName(ROLE_NAME);
         userEntity.setRoles(Collections.singleton(role));
 
-        final PersistedUserUserEntityConverter converter = new PersistedUserUserEntityConverter();
         final PersistedUserDTO persistedUserDTO = converter.convertToDto(userEntity);
 
         Assert.assertEquals(Long.valueOf(1L), persistedUserDTO.getId());
@@ -36,6 +43,6 @@ public class PersistedUserUserEntityConverterTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void convertToDbo() {
-        new PersistedUserUserEntityConverter().convertToDbo(null);
+        converter.convertToDbo(null);
     }
 }

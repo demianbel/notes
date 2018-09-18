@@ -1,19 +1,47 @@
 <template>
   <div id="note">
-    <input v-model="this.name" placeholder="note name"/>
-    <textarea v-model="this.text" placeholder="note text"></textarea>
+    <input v-model="noteValue.name" placeholder="note name"/>
+    <textarea v-model="noteValue.text" placeholder="note text"></textarea>
+    <button @click="saveNote">Save</button>
   </div>
 </template>
 
 <script>
+  import axios from 'axios';
+
   export default {
     name: 'Note',
-    props: ['id', 'initialName', 'initialContent'],
     data() {
       return {
-        name: this.initialName,
-        text: this.initialContent
+        noteValue: {
+          name: '',
+          text: '',
+          nodeId: null,
+          tags: []
+        }
       };
+    },
+    methods: {
+      saveNote: function () {
+        axios.post(`http://localhost:8080/notes/rest/note`, this.noteValue,{
+          headers: {Authorization: this.$store.state.auth.authToken}
+        }).then(response => {
+          this.$notify({
+            group: 'general_notifications',
+            title: 'Success',
+            text: 'Note saved!',
+            type: 'info'
+          });
+          this.$router.replace({name: 'Secure'})
+        }).catch(e => {
+          this.$notify({
+            group: 'general_notifications',
+            title: 'Error',
+            text: 'Try again!',
+            type: 'error'
+          });
+        });
+      }
     }
   }
 </script>

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import axios from 'axios';
 
   export default {
     name: 'SignUp',
@@ -28,8 +28,9 @@
     computed: {
       credentials: function () {
         return {
-          username: this.name,
-          password: this.password
+          username: this.signUpBody.name,
+          password: this.signUpBody.password,
+          vue: this
         }
       }
     },
@@ -44,7 +45,6 @@
               type: 'info'
             });
             this.$store.dispatch("auth/authorize",this.credentials)
-            this.$router.replace({name: "Main"});
           })
           .catch(e => {
             this.$notify({
