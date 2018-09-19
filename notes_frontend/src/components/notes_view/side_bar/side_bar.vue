@@ -1,7 +1,7 @@
 <template>
   <div>
       <account-info class="account_info"></account-info>
-      <p @click="$emit('notesSelected')">Notes</p>
+      <p @click="$emit('dirSelected')">Directories</p>
       <p @click="$emit('tagsSelected')">Tags</p>
       <p @click="logout">Log out</p>
   </div>

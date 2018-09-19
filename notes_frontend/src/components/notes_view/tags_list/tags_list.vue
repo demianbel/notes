@@ -2,7 +2,7 @@
   <div>
     <input v-model="newTagName" placeholder="tag name"/>
     <button @click="addNewTag()">Add</button>
-    <tag-menu-item v-for="tag in tags" :key="tag.id" :item-name="tag.name" @delete="deleteTag(tag.id)"></tag-menu-item>
+    <tag-menu-item v-for="tag in tags" :key="tag.id" :item-name="tag.name" @delete="deleteTag(tag.id)" @select="$emit('select',tag.id)"></tag-menu-item>
   </div>
 </template>
 
@@ -57,6 +57,7 @@
             text: 'Try again!',
             type: 'error'
           });
+          console.log(e);
         });
       },
       retrieveTags: function () {
@@ -69,6 +70,30 @@
       },
       deleteTag: function (id) {
         axios.delete(`http://localhost:8080/notes/rest/tag/?id=` + id, {
+          headers: {Authorization: this.$store.state.auth.authToken}
+        }).then(response => {
+          let index, len;
+          let foundIndex = -1;
+          for (index = 0, len = this.tags.length; index < len; ++index) {
+            if (this.tags[index].id === response.data.id) {
+              foundIndex = index;
+            }
+          }
+          if (foundIndex === -1){
+            this.$notify({
+              group: 'general_notifications',
+              title: 'Success',
+              text: 'Tag already deleted!',
+              type: 'info'
+            });
+          } else {
+            this.$delete(this.tags, foundIndex);
+          }
+        }).catch(e => {
+        });
+      },
+      selectTag: function (id) {
+        axios.delete(`http://localhost:8080/notes/rest/note/find/tag?tagId=` + id, {
           headers: {Authorization: this.$store.state.auth.authToken}
         }).then(response => {
           let index, len;
