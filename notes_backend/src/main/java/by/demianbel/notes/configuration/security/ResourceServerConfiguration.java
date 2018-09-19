@@ -17,11 +17,15 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Value("${config.oauth2.resource.id}")
     private String resourceId;
 
-    @Autowired
-    private DefaultTokenServices tokenServices;
+    private final DefaultTokenServices tokenServices;
+
+    private final TokenStore tokenStore;
 
     @Autowired
-    private TokenStore tokenStore;
+    public ResourceServerConfiguration(DefaultTokenServices tokenServices, TokenStore tokenStore) {
+        this.tokenServices = tokenServices;
+        this.tokenStore = tokenStore;
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {

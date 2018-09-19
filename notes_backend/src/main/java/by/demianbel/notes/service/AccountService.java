@@ -31,7 +31,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public PersistedUserDTO signUp(UserToSaveDTO userToSaveDTO) {
+    public PersistedUserDTO signUp(final UserToSaveDTO userToSaveDTO) {
         final RoleEntity userRole = roleRepository.findRoleEntityByNameEquals(USER_ROLE_NAME)
                 .orElseThrow(() -> new RoleNotFoundException("User role '" + USER_ROLE_NAME + "' doesn't exist."));
 

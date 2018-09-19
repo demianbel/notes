@@ -14,6 +14,7 @@ import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.repository.NoteRepository;
 import by.demianbel.notes.repository.TagRepository;
 import by.demianbel.notes.repository.UserRepository;
+import by.demianbel.notes.service.node.NodeHierarchicalService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class NoteService {
     private final NoteToSaveNoteConverter noteToSaveNoteConverter;
     private final PersistedNoteToNoteConverter persistedNoteToNoteConverter;
     private final UserService userService;
-    private final NodeService nodeService;
+    private final NodeHierarchicalService nodeHierarchicalService;
 
     public PersistedNoteDTO createNote(final NoteToSaveDTO noteDto) {
         final NoteEntity noteToSave = noteToSaveNoteConverter.convertToDbo(noteDto);
@@ -68,8 +69,8 @@ public class NoteService {
                         .map(persistedNoteToNoteConverter::convertToDto).collect(
                         Collectors.toList());
         response.setNotes(notesWithoutNodes);
-        response.setNodes(nodeService.getAllNodesHierarchical());
-        response.setSharedNodes(nodeService.getSharedNodeHierarchical());
+        response.setNodes(nodeHierarchicalService.getAllNodesHierarchical());
+        response.setSharedNodes(nodeHierarchicalService.getSharedNodeHierarchical());
         return response;
     }
 

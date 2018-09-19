@@ -23,16 +23,16 @@ public class HierarchicalNodeToNodeConverter implements DtoToDboConverter<Hierar
 
     @Override
     public HierarchicalNodeDTO convertToDto(final NodeEntity nodeEntity) {
-        HierarchicalNodeDTO hierarchicalNodeDTO = new HierarchicalNodeDTO();
+        final HierarchicalNodeDTO hierarchicalNodeDTO = new HierarchicalNodeDTO();
         BeanUtils.copyProperties(nodeEntity, hierarchicalNodeDTO);
 
-        List<HierarchicalNodeDTO> children =
+        final List<HierarchicalNodeDTO> children =
                 Optional.ofNullable(nodeEntity.getChildren()).orElse(Collections.emptySet()).stream()
                         .filter(NodeEntity::isActive)
                         .map(this::convertToDto).collect(Collectors.toList());
         hierarchicalNodeDTO.setChildren(children);
 
-        List<HierarchicalNoteDTO> notes =
+        final List<HierarchicalNoteDTO> notes =
                 Optional.ofNullable(nodeEntity.getNotes()).orElse(Collections.emptySet()).stream()
                         .filter(NoteEntity::isActive)
                         .map(hierarchicalNoteToNoteConverter::convertToDto).collect(

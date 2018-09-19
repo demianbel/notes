@@ -14,7 +14,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = {UserNotFoundException.class, RoleNotFoundException.class,
             TagNotFoundException.class, NoteNotFoundException.class, NodeNotFoundException.class})
-    protected ResponseEntity<Object> handleUserNotFound(
+    protected ResponseEntity<Object> handleNotFound(
             RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(),
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

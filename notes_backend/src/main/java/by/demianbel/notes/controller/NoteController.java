@@ -4,8 +4,9 @@ import by.demianbel.notes.dto.hierarhical.HierarchicalDataResponse;
 import by.demianbel.notes.dto.node.HierarchicalNodeDTO;
 import by.demianbel.notes.dto.note.NoteToSaveDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
-import by.demianbel.notes.service.NodeService;
 import by.demianbel.notes.service.NoteService;
+import by.demianbel.notes.service.node.NodeHierarchicalService;
+import by.demianbel.notes.service.node.NodeService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ public class NoteController {
 
     private final NoteService noteService;
     private final NodeService nodeService;
+    private final NodeHierarchicalService nodeHierarchicalService;
 
     @RequestMapping(method = RequestMethod.POST)
     public PersistedNoteDTO addNote(@RequestBody final NoteToSaveDTO noteToSaveDto) {
@@ -46,7 +48,7 @@ public class NoteController {
 
     @RequestMapping(value = "/hierarchy/node", method = RequestMethod.GET)
     public HierarchicalNodeDTO getNotesHierarchicalByNode(final Long nodeId) {
-        return nodeService.getHierarchicalNode(nodeId);
+        return nodeHierarchicalService.getHierarchicalNode(nodeId);
     }
 
     @RequestMapping(value = "/find/tag", method = RequestMethod.GET)

@@ -6,17 +6,11 @@ import by.demianbel.notes.converter.tag.PersistedTagTagEntityConverter;
 import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dbo.NoteEntity;
 import by.demianbel.notes.dbo.TagEntity;
-import by.demianbel.notes.dbo.UserEntity;
-import by.demianbel.notes.dto.node.PersistedNodeDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
 import by.demianbel.notes.dto.tag.PersistedTagDTO;
-import by.demianbel.notes.repository.NodeRepository;
-import by.demianbel.notes.repository.TagRepository;
-import by.demianbel.notes.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -3,7 +3,8 @@ package by.demianbel.notes.controller;
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
-import by.demianbel.notes.service.NodeService;
+import by.demianbel.notes.service.node.NodeService;
+import by.demianbel.notes.service.node.NodeSharingService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import java.util.List;
 public class NodeController {
 
     private final NodeService nodeService;
+    private final NodeSharingService nodeSharingService;
 
     @RequestMapping(method = RequestMethod.GET)
     public PersistedNodeDTO findNodeById(final Long id) {
@@ -48,11 +50,11 @@ public class NodeController {
 
     @RequestMapping(value = "/share/adduser", method = RequestMethod.PUT)
     public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId) {
-        return nodeService.shareNodeWithUser(userId, nodeId);
+        return nodeSharingService.shareNodeWithUser(userId, nodeId);
     }
 
     @RequestMapping(value = "/share/removeuser", method = RequestMethod.PUT)
     public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId) {
-        return nodeService.unshareNodeWithUser(userId, nodeId);
+        return nodeSharingService.unshareNodeWithUser(userId, nodeId);
     }
 }

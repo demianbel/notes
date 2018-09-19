@@ -5,11 +5,9 @@ import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.exception.NodeNotFoundException;
-import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.service.UserService;
 import lombok.AllArgsConstructor;
-import org.mockito.Mock;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

@@ -32,11 +32,22 @@ import java.util.UUID;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService notesUserDetailsService;
+    private final UserDetailsService notesUserDetailsService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final ClientDetailsService clientDetailsService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    public AuthorizationServerConfig(final UserDetailsService notesUserDetailsService, final AuthenticationManager authenticationManager,
+                                     final ClientDetailsService clientDetailsService, final PasswordEncoder passwordEncoder) {
+        this.notesUserDetailsService = notesUserDetailsService;
+        this.authenticationManager = authenticationManager;
+        this.clientDetailsService = clientDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Value("${config.oauth2.resource.id}")
     private String resourceId;
@@ -47,11 +58,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Value("${config.oauth2.publicKey}")
     private String publicKey;
 
-    @Autowired
-    private ClientDetailsService clientDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -70,7 +76,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
 
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(publicKey);
         converter.setVerifierKey(publicKey);
 
@@ -85,7 +91,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     @Primary
     public DefaultTokenServices tokenServices() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setClientDetailsService(clientDetailsService);
         defaultTokenServices.setSupportRefreshToken(true);
@@ -95,7 +101,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(
                 buildExtraFieldsTokenEnhancer(),
                 accessTokenConverter()));
@@ -111,7 +117,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer security) {
         security
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()");
