@@ -7,6 +7,8 @@ import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
 import by.demianbel.notes.dto.user.UserToUpdateDTO;
+import by.demianbel.notes.exception.RoleNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.RoleRepository;
 import by.demianbel.notes.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -31,13 +33,13 @@ public class UserService {
         final String userName = (String) authentication.getPrincipal();
         final Optional<UserEntity> currentUser = userRepository.findByName(userName);
         return currentUser.orElseThrow(
-                () -> new RuntimeException("User with name = '" + userName + "' not found."));
+                () -> new UserNotFoundException("User with name = '" + userName + "' not found."));
 
     }
 
     public PersistedUserDTO createAdmin(final UserToSaveDTO userToSaveDTO) {
         final RoleEntity userRole = roleRepository.findRoleEntityByNameEquals(ADMIN_ROLE_NAME)
-                .orElseThrow(() -> new RuntimeException("User role '" + ADMIN_ROLE_NAME + "' doesn't exist."));
+                .orElseThrow(() -> new RoleNotFoundException("User role '" + ADMIN_ROLE_NAME + "' doesn't exist."));
 
         final UserEntity userToSave = userToSaveUserEntityConverter.convertToDbo(userToSaveDTO);
         userToSave.setRoles(Collections.singleton(userRole));
@@ -51,7 +53,7 @@ public class UserService {
 
         final Long userId = userToUpdateDTO.getId();
         final UserEntity userToUpdate = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
+                .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' hasn't found."));
 
         final String userName = userToUpdateDTO.getName();
         if (userName != null) {
@@ -70,7 +72,7 @@ public class UserService {
 
     public PersistedUserDTO deactivateUser(final Long userId) {
         final UserEntity userToDeactivate = userRepository.findByIdAndActiveIsTrue(userId)
-                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
+                .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' hasn't found."));
         userToDeactivate.setActive(false);
         userRepository.save(userToDeactivate);
         return persistedUserUserEntityConverter.convertToDto(userToDeactivate);
@@ -78,6 +80,6 @@ public class UserService {
 
     public PersistedUserDTO getUserById(final Long userId) {
         return userRepository.findById(userId).map(persistedUserUserEntityConverter::convertToDto)
-                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' hasn't found."));
+                .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' hasn't found."));
     }
 }

@@ -7,9 +7,12 @@ import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
 import by.demianbel.notes.dto.user.UserToRestoreDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
+import by.demianbel.notes.exception.RoleNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.RoleRepository;
 import by.demianbel.notes.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +33,7 @@ public class AccountService {
 
     public PersistedUserDTO signUp(UserToSaveDTO userToSaveDTO) {
         final RoleEntity userRole = roleRepository.findRoleEntityByNameEquals(USER_ROLE_NAME)
-                .orElseThrow(() -> new RuntimeException("User role '" + USER_ROLE_NAME + "' doesn't exist."));
+                .orElseThrow(() -> new RoleNotFoundException("User role '" + USER_ROLE_NAME + "' doesn't exist."));
 
         final UserEntity userToSave = userToSaveUserEntityConverter.convertToDbo(userToSaveDTO);
         userToSave.setRoles(Collections.singleton(userRole));
@@ -53,13 +56,14 @@ public class AccountService {
 
     public PersistedUserDTO restore(final UserToRestoreDTO userToRestoreDTO) {
         final UserEntity userToRestore = userRepository.findByName(userToRestoreDTO.getName()).orElseThrow(
-                () -> new RuntimeException("User with name '" + userToRestoreDTO.getName() + "' not found"));
+                () -> new UserNotFoundException("User with name '" + userToRestoreDTO.getName() + "' not found"));
+
         if (passwordEncoder.matches(userToRestoreDTO.getPassword(), userToRestore.getPassword())) {
             userToRestore.setActive(true);
             userRepository.save(userToRestore);
             return persistedUserUserEntityConverter.convertToDto(userToRestore);
         } else {
-            throw new RuntimeException("Wrong password.");
+            throw new BadCredentialsException("Wrong password.");
         }
     }
 }

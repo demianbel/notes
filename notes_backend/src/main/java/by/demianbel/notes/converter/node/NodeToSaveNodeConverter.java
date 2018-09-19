@@ -4,6 +4,8 @@ import by.demianbel.notes.converter.DtoToDboConverter;
 import by.demianbel.notes.dbo.NodeEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
+import by.demianbel.notes.exception.NodeNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.service.UserService;
 import lombok.AllArgsConstructor;
@@ -47,6 +49,6 @@ public class NodeToSaveNodeConverter implements DtoToDboConverter<NodeToSaveDTO,
     private NodeEntity findParentNode(final Long id) {
         final UserEntity currentUser = userService.getCurrentUser();
         return nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, id)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + id + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + id + "' doesn't exist."));
     }
 }

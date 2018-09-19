@@ -3,6 +3,7 @@ package by.demianbel.notes.controller;
 import by.demianbel.notes.dto.user.PersistedUserDTO;
 import by.demianbel.notes.dto.user.UserToRestoreDTO;
 import by.demianbel.notes.dto.user.UserToSaveDTO;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/restore", method = RequestMethod.POST)
-    public PersistedUserDTO restore(@RequestBody final UserToRestoreDTO userToRestoreDTO) {
+    public PersistedUserDTO restore(@RequestBody final UserToRestoreDTO userToRestoreDTO) throws UserNotFoundException {
         return accountService.restore(userToRestoreDTO);
     }
 

@@ -12,6 +12,8 @@ import by.demianbel.notes.dto.node.HierarchicalNodeDTO;
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
+import by.demianbel.notes.exception.NodeNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.repository.NoteRepository;
 import by.demianbel.notes.repository.UserRepository;
@@ -61,25 +63,25 @@ public class NodeService {
         });
     }
 
-    public PersistedNodeDTO changeNodeName(final Long id, final String name) {
+    public PersistedNodeDTO changeNodeName(final Long id, final String name)  {
         return doWithActiveNode(id, nodeEntity -> {
             nodeEntity.setName(name);
             return nodeRepository.save(nodeEntity);
         });
     }
 
-    private PersistedNodeDTO doWithActiveNode(final Long id, final Function<NodeEntity, NodeEntity> function) {
+    private PersistedNodeDTO doWithActiveNode(final Long id, final Function<NodeEntity, NodeEntity> function)  {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity tagToProcess =
                 nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, id)
-                        .orElseThrow(() -> new RuntimeException("Node with id = '" + id + "' doesn't exist."));
+                        .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + id + "' doesn't exist."));
         final NodeEntity resultTag = function.apply(tagToProcess);
         return persistedNodeToNodeConverter.convertToDto(resultTag);
 
     }
 
     @Transactional
-    public List<HierarchicalNodeDTO> getAllNodesHierarchical() {
+    public List<HierarchicalNodeDTO> getAllNodesHierarchical()  {
         final UserEntity currentUser = userService.getCurrentUser();
         List<NodeEntity> rootNodes =
                 nodeRepository.findByUserAndActiveIsTrueAndParentNodeIsNull(currentUser);
@@ -90,7 +92,7 @@ public class NodeService {
         final UserEntity currentUser = userService.getCurrentUser();
         return nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
                 .map(hierarchicalNodeToNodeConverter::convertToDto)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
     }
 
     @Transactional
@@ -160,7 +162,7 @@ public class NodeService {
     }
 
 
-    public List<PersistedNodeDTO> findNodeByName(final String name) {
+    public List<PersistedNodeDTO> findNodeByName(final String name) throws UserNotFoundException {
         final List<PersistedNodeDTO> resultNodes = new ArrayList<>();
         final UserEntity currentUser = userService.getCurrentUser();
         final Optional<NodeEntity> equalNode = nodeRepository.findFirstByUserAndActiveIsTrueAndName(currentUser, name);
@@ -181,12 +183,12 @@ public class NodeService {
     }
 
     @Transactional
-    public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId) {
+    public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId) throws UserNotFoundException, NodeNotFoundException {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity nodeToShare = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
         final UserEntity userToShare = userRepository.findByIdAndActiveIsTrue(userId)
-                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' doesn't exist."));
+                .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' doesn't exist."));
 
         final Set<NoteEntity> notesToShare = getNotesFromNode(nodeToShare);
         notesToShare.forEach(noteEntity -> noteEntity.getUsersToShare().add(userToShare));
@@ -197,10 +199,10 @@ public class NodeService {
     }
 
     @Transactional
-    public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId) {
+    public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId) throws UserNotFoundException, NodeNotFoundException {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity nodeToShare = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
 
         final Set<NoteEntity> notesToShare = getNotesFromNode(nodeToShare);
         notesToShare.forEach(noteEntity -> {

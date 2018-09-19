@@ -5,6 +5,8 @@ import by.demianbel.notes.dbo.TagEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.tag.PersistedTagDTO;
 import by.demianbel.notes.dto.tag.TagNameDTO;
+import by.demianbel.notes.exception.TagNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -95,7 +97,7 @@ public class TagService {
         final UserEntity currentUser = userService.getCurrentUser();
         final TagEntity tagToProcess =
                 tagRepository.findByUserAndId(currentUser, id)
-                        .orElseThrow(() -> new RuntimeException("Tag with id = '" + id + "' doesn't exist."));
+                        .orElseThrow(() -> new TagNotFoundException("Tag with id = '" + id + "' doesn't exist."));
         final TagEntity resultTag = function.apply(tagToProcess);
         return persistedTagTagEntityConverter.convertToDto(resultTag);
 
@@ -105,7 +107,7 @@ public class TagService {
         final UserEntity currentUser = userService.getCurrentUser();
         final TagEntity tagToProcess =
                 tagRepository.findByUserAndIdAndActive(currentUser, id, true)
-                        .orElseThrow(() -> new RuntimeException("Tag with id = '" + id + "' doesn't exist."));
+                        .orElseThrow(() -> new TagNotFoundException("Tag with id = '" + id + "' doesn't exist."));
         final TagEntity resultTag = function.apply(tagToProcess);
         return persistedTagTagEntityConverter.convertToDto(resultTag);
 

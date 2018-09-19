@@ -2,14 +2,14 @@ package by.demianbel.notes.service;
 
 import by.demianbel.notes.converter.note.NoteToSaveNoteConverter;
 import by.demianbel.notes.converter.note.PersistedNoteToNoteConverter;
-import by.demianbel.notes.dbo.AbstractEntity;
-import by.demianbel.notes.dbo.NodeEntity;
-import by.demianbel.notes.dbo.NoteEntity;
-import by.demianbel.notes.dbo.TagEntity;
-import by.demianbel.notes.dbo.UserEntity;
+import by.demianbel.notes.dbo.*;
 import by.demianbel.notes.dto.hierarhical.HierarchicalDataResponse;
 import by.demianbel.notes.dto.note.NoteToSaveDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
+import by.demianbel.notes.exception.NodeNotFoundException;
+import by.demianbel.notes.exception.NoteNotFoundException;
+import by.demianbel.notes.exception.TagNotFoundException;
+import by.demianbel.notes.exception.UserNotFoundException;
 import by.demianbel.notes.repository.NodeRepository;
 import by.demianbel.notes.repository.NoteRepository;
 import by.demianbel.notes.repository.TagRepository;
@@ -17,11 +17,7 @@ import by.demianbel.notes.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -67,7 +63,7 @@ public class NoteService {
         final UserEntity currentUser = userService.getCurrentUser();
 
         final HierarchicalDataResponse response = new HierarchicalDataResponse();
-        List<PersistedNoteDTO> notesWithoutNodes =
+        final List<PersistedNoteDTO> notesWithoutNodes =
                 noteRepository.findByUserAndActiveTrueAndNodeIsNull(currentUser).stream()
                         .map(persistedNoteToNoteConverter::convertToDto).collect(
                         Collectors.toList());
@@ -80,7 +76,7 @@ public class NoteService {
     public List<PersistedNoteDTO> getAllNotesByTag(final Long tagId) {
         final UserEntity currentUser = userService.getCurrentUser();
         final TagEntity tagEntity = tagRepository.findByUserAndIdAndActive(currentUser, tagId, true)
-                .orElseThrow(() -> new RuntimeException("Tag with id = '" + tagId + "' doesn't exist."));
+                .orElseThrow(() -> new TagNotFoundException("Tag with id = '" + tagId + "' doesn't exist."));
         return tagEntity.getNotes().stream().filter(AbstractEntity::isActive)
                 .map(persistedNoteToNoteConverter::convertToDto).collect(
                         Collectors.toList());
@@ -89,7 +85,7 @@ public class NoteService {
     public List<PersistedNoteDTO> getAllNotesByNode(final Long nodeId) {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity nodeEntity = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
         return nodeEntity.getNotes().stream().filter(AbstractEntity::isActive)
                 .map(persistedNoteToNoteConverter::convertToDto).collect(
                         Collectors.toList());
@@ -141,7 +137,7 @@ public class NoteService {
                 noteRepository.findByUserAndActiveAndId(currentUser, true, noteId)
                         .orElseThrow(() -> new RuntimeException("Note with id = '" + noteId + "' doesn't exist."));
         final TagEntity tagToAddToNote = tagRepository.findByUserAndIdAndActive(currentUser, tagId, true)
-                .orElseThrow(() -> new RuntimeException("Tag with id = '" + tagId + "' doesn't exist."));
+                .orElseThrow(() -> new TagNotFoundException("Tag with id = '" + tagId + "' doesn't exist."));
         noteToAddTag.getTags().add(tagToAddToNote);
         final NoteEntity resultNote = noteRepository.save(noteToAddTag);
         return persistedNoteToNoteConverter.convertToDto(resultNote);
@@ -150,9 +146,8 @@ public class NoteService {
     public PersistedNoteDTO removeTagFromNote(final Long tagId, final Long noteId) {
         return doWithActiveNote(noteId, noteEntity -> {
             final Set<TagEntity> noteTags = noteEntity.getTags();
-            final TagEntity tagToRemove = noteTags.stream().filter(tag -> tag.getId() == tagId).findAny()
-                    .orElseThrow(() -> new RuntimeException("Tag with id = '" + tagId + "' doesn't exist."));
-            noteTags.remove(tagToRemove);
+            noteTags.stream().filter(tag -> tag.getId() == tagId).findAny()
+                    .ifPresent(noteTags::remove);
             return noteRepository.save(noteEntity);
         });
     }
@@ -176,10 +171,10 @@ public class NoteService {
 
         final NoteEntity note =
                 noteRepository.findByUserAndActiveAndId(currentUser, true, noteId)
-                        .orElseThrow(() -> new RuntimeException("Note with id = '" + noteId + "' doesn't exist."));
+                        .orElseThrow(() -> new NoteNotFoundException("Note with id = '" + noteId + "' doesn't exist."));
 
         final NodeEntity node = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
-                .orElseThrow(() -> new RuntimeException("Node with id = '" + nodeId + "' doesn't exist."));
+                .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
         note.setNode(node);
 
         final NoteEntity savedNote = noteRepository.save(note);
@@ -198,7 +193,7 @@ public class NoteService {
         final UserEntity currentUser = userService.getCurrentUser();
         final NoteEntity noteToProcess =
                 noteRepository.findByUserAndActiveAndId(currentUser, true, id)
-                        .orElseThrow(() -> new RuntimeException("Note with id = '" + id + "' doesn't exist."));
+                        .orElseThrow(() -> new NoteNotFoundException("Note with id = '" + id + "' doesn't exist."));
         final NoteEntity resultNote = function.apply(noteToProcess);
         return persistedNoteToNoteConverter.convertToDto(resultNote);
 
@@ -208,9 +203,9 @@ public class NoteService {
         final UserEntity currentUser = userService.getCurrentUser();
         final NoteEntity noteToProcess =
                 noteRepository.findByUserAndActiveAndId(currentUser, true, noteId)
-                        .orElseThrow(() -> new RuntimeException("Note with id = '" + noteId + "' doesn't exist."));
+                        .orElseThrow(() -> new NoteNotFoundException("Note with id = '" + noteId + "' doesn't exist."));
         final UserEntity userToShare = userRepository.findByIdAndActiveIsTrue(userId)
-                .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' doesn't exist."));
+                .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' doesn't exist."));
         noteToProcess.getUsersToShare().add(userToShare);
         final NoteEntity savedEntity = noteRepository.save(noteToProcess);
         return persistedNoteToNoteConverter.convertToDto(savedEntity);
@@ -219,9 +214,8 @@ public class NoteService {
     public PersistedNoteDTO unshareNoteWithUser(final Long userId, final Long noteId) {
         return doWithActiveNote(noteId, noteEntity -> {
             final Set<UserEntity> noteUsers = noteEntity.getUsersToShare();
-            final UserEntity userToUnshare = noteUsers.stream().filter(user -> user.getId() == userId).findAny()
-                    .orElseThrow(() -> new RuntimeException("User with id = '" + userId + "' doesn't exist."));
-            noteUsers.remove(userToUnshare);
+            noteUsers.stream().filter(user -> user.getId() == userId).findAny()
+                    .ifPresent(noteUsers::remove);
             return noteRepository.save(noteEntity);
         });
     }
