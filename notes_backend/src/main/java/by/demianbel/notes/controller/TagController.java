@@ -4,8 +4,14 @@ import by.demianbel.notes.dto.tag.PersistedTagDTO;
 import by.demianbel.notes.dto.tag.TagNameDTO;
 import by.demianbel.notes.service.TagService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -33,6 +39,7 @@ public class TagController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public PersistedTagDTO createTagWithName(@RequestBody final TagNameDTO tagNameDTO) {
         return tagService.createTagWithName(tagNameDTO);
     }

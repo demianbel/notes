@@ -2,7 +2,11 @@ package by.demianbel.notes.service;
 
 import by.demianbel.notes.converter.note.NoteToSaveNoteConverter;
 import by.demianbel.notes.converter.note.PersistedNoteToNoteConverter;
-import by.demianbel.notes.dbo.*;
+import by.demianbel.notes.dbo.AbstractEntity;
+import by.demianbel.notes.dbo.NodeEntity;
+import by.demianbel.notes.dbo.NoteEntity;
+import by.demianbel.notes.dbo.TagEntity;
+import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.hierarhical.HierarchicalDataResponse;
 import by.demianbel.notes.dto.note.NoteToSaveDTO;
 import by.demianbel.notes.dto.note.PersistedNoteDTO;
@@ -18,7 +22,13 @@ import by.demianbel.notes.service.node.NodeHierarchicalService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -106,7 +116,7 @@ public class NoteService {
         } else {
             equalNoteId = null;
         }
-        similarNotes.stream().filter(tag -> !Objects.equals(tag.getId(), equalNoteId))
+        similarNotes.stream().filter(note -> !Objects.equals(note.getId(), equalNoteId))
                 .map(persistedNoteToNoteConverter::convertToDto).forEach(resultNotes::add);
 
         return resultNotes;
@@ -139,14 +149,16 @@ public class NoteService {
                         .orElseThrow(() -> new RuntimeException("Note with id = '" + noteId + "' doesn't exist."));
         final TagEntity tagToAddToNote = tagRepository.findByUserAndIdAndActive(currentUser, tagId, true)
                 .orElseThrow(() -> new TagNotFoundException("Tag with id = '" + tagId + "' doesn't exist."));
-        noteToAddTag.getTags().add(tagToAddToNote);
+        final Set<TagEntity> tags = Optional.ofNullable(noteToAddTag.getTags()).orElse(new HashSet<>());
+        tags.add(tagToAddToNote);
+        noteToAddTag.setTags(tags);
         final NoteEntity resultNote = noteRepository.save(noteToAddTag);
         return persistedNoteToNoteConverter.convertToDto(resultNote);
     }
 
     public PersistedNoteDTO removeTagFromNote(final Long tagId, final Long noteId) {
         return doWithActiveNote(noteId, noteEntity -> {
-            final Set<TagEntity> noteTags = noteEntity.getTags();
+            final Set<TagEntity> noteTags = Optional.ofNullable(noteEntity.getTags()).orElse(Collections.emptySet());
             noteTags.stream().filter(tag -> tag.getId() == tagId).findAny()
                     .ifPresent(noteTags::remove);
             return noteRepository.save(noteEntity);
@@ -207,14 +219,17 @@ public class NoteService {
                         .orElseThrow(() -> new NoteNotFoundException("Note with id = '" + noteId + "' doesn't exist."));
         final UserEntity userToShare = userRepository.findByIdAndActiveIsTrue(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' doesn't exist."));
-        noteToProcess.getUsersToShare().add(userToShare);
+        final Set<UserEntity> usersToShare =
+                Optional.ofNullable(noteToProcess.getUsersToShare()).orElse(new HashSet<>());
+        usersToShare.add(userToShare);
+        noteToProcess.setUsersToShare(usersToShare);
         final NoteEntity savedEntity = noteRepository.save(noteToProcess);
         return persistedNoteToNoteConverter.convertToDto(savedEntity);
     }
 
     public PersistedNoteDTO unshareNoteWithUser(final Long userId, final Long noteId) {
         return doWithActiveNote(noteId, noteEntity -> {
-            final Set<UserEntity> noteUsers = noteEntity.getUsersToShare();
+            final Set<UserEntity> noteUsers = Optional.ofNullable(noteEntity.getUsersToShare()).orElse(new HashSet<>());
             noteUsers.stream().filter(user -> user.getId() == userId).findAny()
                     .ifPresent(noteUsers::remove);
             return noteRepository.save(noteEntity);

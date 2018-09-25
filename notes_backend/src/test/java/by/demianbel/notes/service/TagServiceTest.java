@@ -52,12 +52,14 @@ public class TagServiceTest {
     public void findTagByName() {
         final TagEntity equalTagEntity = new TagEntity();
         equalTagEntity.setId(1L);
-        Mockito.when(tagRepository.findFirstByUserAndActiveAndName(Mockito.any(), Mockito.eq(true), Mockito.eq(TAG_NAME)))
+        Mockito.when(
+                tagRepository.findFirstByUserAndActiveAndName(Mockito.any(), Mockito.eq(true), Mockito.eq(TAG_NAME)))
                 .thenReturn(Optional.of(equalTagEntity));
 
         final TagEntity likeTagEntity = new TagEntity();
         likeTagEntity.setId(2L);
-        Mockito.when(tagRepository.findAllByUserAndActiveAndNameLike(Mockito.any(), Mockito.eq(true), Mockito.eq(TAG_NAME)))
+        Mockito.when(tagRepository.findAllByUserAndActiveAndNameLike(Mockito.any(), Mockito.eq(true),
+                                                                     Mockito.eq("%" + TAG_NAME + "%")))
                 .thenReturn(Collections.singletonList(likeTagEntity));
 
         final TagNameDTO tagNameDTO = new TagNameDTO();

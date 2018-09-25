@@ -29,13 +29,13 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 public class AccountServiceTest {
 
-    public static final String PASSWORD = "password";
-    public static final String EMAIL = "email";
-    public static final String NAME = "name";
-    public static final String USER_ROLE_NAME = "user";
-    public static final String ROLE_NAME = "role name";
-    public static final String RIGHT_PASSWORD = "right password";
-    public static final String WRONG_PASSWORD = "wrong password";
+    private static final String PASSWORD = "password";
+    private static final String EMAIL = "email";
+    private static final String NAME = "name";
+    private static final String USER_ROLE_NAME = "user";
+    private static final String ROLE_NAME = "role name";
+    private static final String RIGHT_PASSWORD = "right password";
+    private static final String WRONG_PASSWORD = "wrong password";
 
     @TestConfiguration
     public static class AccountServiceTestConfiguration {
