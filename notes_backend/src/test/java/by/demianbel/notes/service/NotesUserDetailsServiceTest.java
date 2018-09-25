@@ -20,9 +20,9 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 public class NotesUserDetailsServiceTest {
 
-    public static final String USER_NAME = "name";
-    public static final String USER_EMAIL = "user email";
-    public static final String USER_PASSWORD = "user password";
+    private static final String USER_NAME = "name";
+    private static final String USER_EMAIL = "user email";
+    private static final String USER_PASSWORD = "user password";
 
     @TestConfiguration
     static class NotesUserDetailsServiceTestConfiguration {
