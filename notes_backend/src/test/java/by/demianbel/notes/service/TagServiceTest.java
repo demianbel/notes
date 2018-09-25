@@ -28,8 +28,8 @@ public class TagServiceTest {
     @TestConfiguration
     static class TagServiceTestConfiguration {
         @Bean
-        public TagService tagService(TagRepository tagRepository, UserService userService,
-                                     PersistedTagTagEntityConverter persistedTagTagEntityConverter) {
+        public TagService tagService(final TagRepository tagRepository, final UserService userService,
+                                     final PersistedTagTagEntityConverter persistedTagTagEntityConverter) {
             return new TagService(tagRepository, userService, persistedTagTagEntityConverter);
         }
 
