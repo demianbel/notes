@@ -31,8 +31,7 @@ public class UserService {
     public UserEntity getCurrentUser() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String userName = (String) authentication.getPrincipal();
-        final Optional<UserEntity> currentUser = userRepository.findByName(userName);
-        return currentUser.orElseThrow(
+        return userRepository.findByName(userName).orElseThrow(
                 () -> new UserNotFoundException("User with name = '" + userName + "' not found."));
 
     }

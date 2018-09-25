@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,8 +17,11 @@ public class PersistedUserUserEntityConverter implements DtoToDboConverter<Persi
     public PersistedUserDTO convertToDto(final UserEntity userEntity) {
         final PersistedUserDTO persistedUserDTO = new PersistedUserDTO();
         BeanUtils.copyProperties(userEntity, persistedUserDTO);
-        final List<String> roles = userEntity.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toList());
-        persistedUserDTO.setRoles(roles);
+        final Set<RoleEntity> persistedRoles = userEntity.getRoles();
+        if (persistedRoles != null) {
+            final List<String> roles = persistedRoles.stream().map(RoleEntity::getName).collect(Collectors.toList());
+            persistedUserDTO.setRoles(roles);
+        }
         return persistedUserDTO;
     }
 
