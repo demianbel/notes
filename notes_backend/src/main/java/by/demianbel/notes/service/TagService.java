@@ -28,7 +28,7 @@ public class TagService {
         final UserEntity currentUser = userService.getCurrentUser();
         final Optional<TagEntity> equalTag = tagRepository.findFirstByUserAndActiveAndName(currentUser, true, tagNameDTO.getName());
         final List<TagEntity> similarTags =
-                tagRepository.findAllByUserAndActiveAndNameLike(currentUser, true, "%" + tagNameDTO.getName() + "%");
+                tagRepository.findAllByUserAndActiveAndNameLike(currentUser, true, tagNameDTO.getName());
 
         equalTag.map(persistedTagTagEntityConverter::convertToDto).ifPresent(resultTags::add);
         final Long filterTagId;
