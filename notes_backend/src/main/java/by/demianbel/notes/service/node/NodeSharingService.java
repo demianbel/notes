@@ -15,7 +15,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +33,8 @@ public class NodeSharingService {
     private final PersistedNoteToNoteConverter persistedNoteToNoteConverter;
 
     @Transactional
-    public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId) throws UserNotFoundException, NodeNotFoundException {
+    public List<PersistedNoteDTO> shareNodeWithUser(final Long userId, final Long nodeId)
+            throws UserNotFoundException, NodeNotFoundException {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity nodeToShare = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
                 .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
@@ -37,7 +42,16 @@ public class NodeSharingService {
                 .orElseThrow(() -> new UserNotFoundException("User with id = '" + userId + "' doesn't exist."));
 
         final Set<NoteEntity> notesToShare = getNotesFromNode(nodeToShare);
-        notesToShare.forEach(noteEntity -> noteEntity.getUsersToShare().add(userToShare));
+        notesToShare.forEach(noteEntity -> {
+            final Set<UserEntity> usersToShare = noteEntity.getUsersToShare();
+            if (usersToShare != null) {
+                usersToShare.add(userToShare);
+            } else {
+                final HashSet<UserEntity> createdUsersToShare = new HashSet<>();
+                createdUsersToShare.add(userToShare);
+                noteEntity.setUsersToShare(createdUsersToShare);
+            }
+        });
         noteRepository.saveAll(notesToShare);
 
         return notesToShare.stream().map(persistedNoteToNoteConverter::convertToDto).collect(Collectors.toList());
@@ -45,21 +59,23 @@ public class NodeSharingService {
     }
 
     @Transactional
-    public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId) throws UserNotFoundException, NodeNotFoundException {
+    public List<PersistedNoteDTO> unshareNodeWithUser(final Long userId, final Long nodeId)
+            throws UserNotFoundException, NodeNotFoundException {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity nodeToShare = nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, nodeId)
                 .orElseThrow(() -> new NodeNotFoundException("Node with id = '" + nodeId + "' doesn't exist."));
 
         final Set<NoteEntity> notesToShare = getNotesFromNode(nodeToShare);
-        notesToShare.forEach(noteEntity -> {
-            final Set<UserEntity> usersToShare = noteEntity.getUsersToShare();
-            usersToShare.stream().filter(userEntity -> userEntity.getId() == userId).findAny()
-                    .ifPresent(usersToShare::remove);
-        });
+        notesToShare.forEach(noteEntity -> Optional.ofNullable(noteEntity.getUsersToShare())
+                .ifPresent(users -> removeUserWithIdFromCollection(userId, users)));
         noteRepository.saveAll(notesToShare);
 
         return notesToShare.stream().map(persistedNoteToNoteConverter::convertToDto).collect(Collectors.toList());
 
+    }
+
+    private void removeUserWithIdFromCollection(final Long userId, final Set<UserEntity> users) {
+        users.stream().filter(userEntity -> userEntity.getId() == userId).findAny().ifPresent(users::remove);
     }
 
     private Set<NoteEntity> getNotesFromNode(final NodeEntity nodeEntity) {

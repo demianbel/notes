@@ -3,6 +3,7 @@ package by.demianbel.notes.service.node;
 import by.demianbel.notes.converter.node.NodeToSaveNodeConverter;
 import by.demianbel.notes.converter.node.PersistedNodeToNodeConverter;
 import by.demianbel.notes.dbo.NodeEntity;
+import by.demianbel.notes.dbo.NoteEntity;
 import by.demianbel.notes.dbo.UserEntity;
 import by.demianbel.notes.dto.node.NodeToSaveDTO;
 import by.demianbel.notes.dto.node.PersistedNodeDTO;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 @Service
@@ -42,24 +44,32 @@ public class NodeService {
     @Transactional
     public PersistedNodeDTO deactivateNode(final Long id) {
         return doWithActiveNode(id, nodeEntity -> {
-            nodeEntity.setActive(false);
-            nodeEntity.getNotes().forEach(note -> note.setActive(false));
-            nodeEntity.getChildren().forEach(node -> {
-                node.setActive(false);
-                node.getNotes().forEach(note -> note.setActive(false));
-            });
+            deactivateNode(nodeEntity);
+
             return nodeRepository.save(nodeEntity);
         });
     }
 
-    public PersistedNodeDTO changeNodeName(final Long id, final String name)  {
+    private void deactivateNode(final NodeEntity nodeEntity) {
+        nodeEntity.setActive(false);
+        final Set<NoteEntity> childNotes = nodeEntity.getNotes();
+        if (childNotes != null) {
+            childNotes.forEach(note -> note.setActive(false));
+        }
+        final Set<NodeEntity> children = nodeEntity.getChildren();
+        if (children != null) {
+            children.forEach(this::deactivateNode);
+        }
+    }
+
+    public PersistedNodeDTO changeNodeName(final Long id, final String name) {
         return doWithActiveNode(id, nodeEntity -> {
             nodeEntity.setName(name);
             return nodeRepository.save(nodeEntity);
         });
     }
 
-    private PersistedNodeDTO doWithActiveNode(final Long id, final Function<NodeEntity, NodeEntity> function)  {
+    private PersistedNodeDTO doWithActiveNode(final Long id, final Function<NodeEntity, NodeEntity> function) {
         final UserEntity currentUser = userService.getCurrentUser();
         final NodeEntity tagToProcess =
                 nodeRepository.findByUserAndIdAndActiveIsTrue(currentUser, id)
